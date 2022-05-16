@@ -77,14 +77,20 @@ for model_name, model in bluetooth_models:
     eq_oracle_queries = data['queries_eq_oracle']
 
     # data = data_from_cache(eq_oracle) # TODO I think get_paths does not work
-    data = data_from_computed_e_set(l_star_model, include_extended_s_set=True)
     data = data_from_l_star_E_set(l_star_model, e_set, include_extended_s_set=True)
+    data = data_from_computed_e_set(l_star_model, include_extended_s_set=False)
 
     rpni_model = run_RPNI(data, automaton_type='mealy', input_completeness='sink_state', print_info=False)
 
-    cex = compare_automata(rpni_model, l_star_model)[0]
     print(f'Experiment: {model_name}')
+
+    if set(rpni_model.get_input_alphabet()) != set(l_star_model.get_input_alphabet()):
+        print('Learned models do not have the same input alphabets => RPNI model is not input complete.')
+        continue
+
+    cex = compare_automata(rpni_model, l_star_model)
     if cex:
+        cex = cex[0]
         print('Counterexample found between models learned by RPNI and L*.')
         print('Inputs :', cex)
         print('L*     :', l_star_model.compute_output_seq(l_star_model.initial_state, cex))
