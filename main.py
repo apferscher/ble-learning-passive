@@ -1,3 +1,4 @@
+import random
 from os import listdir
 
 from aalpy.SULs import MealySUL
@@ -58,6 +59,16 @@ def data_from_computed_e_set(hypothesis, include_extended_s_set=True):
     return data_from_l_star_E_set(hypothesis, e_set, include_extended_s_set)
 
 
+def generate_random_data(model, num_sequences, min_sequence_len, max_sequence_len):
+    data = []
+    input_alphabet = model.get_input_alphabet()
+    for _ in range(num_sequences):
+        inputs = random.choices(input_alphabet, k=random.randint(min_sequence_len, max_sequence_len))
+        output = model.compute_output_seq(model.initial_state, inputs)
+        data.append(list(zip(inputs, output)))
+    return data
+
+
 bluetooth_models = []
 
 for dot_file in listdir('./automata'):
@@ -79,8 +90,9 @@ for model_name, model in bluetooth_models:
     # data = data_from_cache(eq_oracle) # TODO I think get_paths does not work
     data = data_from_l_star_E_set(l_star_model, e_set, include_extended_s_set=True)
     data = data_from_computed_e_set(l_star_model, include_extended_s_set=True)
+    data = generate_random_data(model, num_sequences=1000, min_sequence_len=5, max_sequence_len=20)
 
-    rpni_model = run_RPNI(data, automaton_type='mealy', input_completeness='sink_state', print_info=False)
+    rpni_model = run_RPNI(data, automaton_type='mealy', input_completeness='sink_state', print_info=True)
 
     print(f'Experiment: {model_name}')
 
@@ -94,10 +106,11 @@ for model_name, model in bluetooth_models:
         print('Counterexample found between models learned by RPNI and L*.')
         print('Inputs :', cex)
         print('L*     :', l_star_model.compute_output_seq(l_star_model.initial_state, cex))
-        print('RPNI   :',  rpni_model.compute_output_seq(rpni_model.initial_state, cex))
+        print('RPNI   :', rpni_model.compute_output_seq(rpni_model.initial_state, cex))
 
     else:
         print('RPNI and L* learned same models.')
         if rpni_model.size != l_star_model.size:
             print(f'    Models do have different size.\n    RPNI {rpni_model.size} vs. L* {l_star_model.size}')
+
     print('-----------------------------------------------')
