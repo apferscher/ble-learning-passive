@@ -6,33 +6,6 @@ from aalpy.learning_algs import run_Lstar, run_RPNI
 from aalpy.oracles import RandomWordEqOracle
 from aalpy.utils import load_automaton_from_file, compare_automata
 
-
-def get_paths(t, paths=None, current_path=None):
-    if paths is None:
-        paths = []
-    if current_path is None:
-        current_path = []
-
-    if len(t.children) == 0:
-        paths.append(current_path)
-    else:
-        for inp, child in t.children.items():
-            current_path.append(inp)
-            get_paths(child, paths, list(current_path))
-    return paths
-
-
-def data_from_cache(l_star_eq_oracle):
-    cache = l_star_eq_oracle.sul.cache
-
-    cache_data = []
-    for inputs in get_paths(cache.root_node):
-        outputs = eq_oracle.sul.query(inputs)
-        cache_data.append(list(zip(inputs, outputs)))
-
-    return cache_data
-
-
 def data_from_l_star_E_set(hypothesis, e_set, include_extended_s_set=True):
     data = []
     prefixes = [state.prefix for state in hypothesis.states]
@@ -87,10 +60,11 @@ for model_name, model in bluetooth_models:
     learning_queries = data['queries_learning']
     eq_oracle_queries = data['queries_eq_oracle']
 
-    # data = data_from_cache(eq_oracle) # TODO I think get_paths does not work
-    data = data_from_l_star_E_set(l_star_model, e_set, include_extended_s_set=True)
-    data = data_from_computed_e_set(l_star_model, include_extended_s_set=True)
-    data = generate_random_data(model, num_sequences=1000, min_sequence_len=5, max_sequence_len=20)
+    print(f'Number of queries required by L*: {learning_queries}')
+
+    # data = data_from_l_star_E_set(l_star_model, e_set, include_extended_s_set=True)
+    # data = data_from_computed_e_set(l_star_model, include_extended_s_set=True)
+    data = generate_random_data(model, num_sequences=learning_queries - 100, min_sequence_len=10, max_sequence_len=20)
 
     rpni_model = run_RPNI(data, automaton_type='mealy', input_completeness='sink_state', print_info=True)
 
