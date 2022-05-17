@@ -6,6 +6,7 @@ from aalpy.learning_algs import run_Lstar, run_RPNI
 from aalpy.oracles import RandomWordEqOracle
 from aalpy.utils import load_automaton_from_file, compare_automata
 
+
 def data_from_l_star_E_set(hypothesis, e_set, include_extended_s_set=True):
     data = []
     prefixes = [state.prefix for state in hypothesis.states]
@@ -30,6 +31,15 @@ def data_from_l_star_E_set(hypothesis, e_set, include_extended_s_set=True):
 def data_from_computed_e_set(hypothesis, include_extended_s_set=True):
     e_set = hypothesis.compute_characterization_set()
     return data_from_l_star_E_set(hypothesis, e_set, include_extended_s_set)
+
+
+def minimized_char_set_data(hypothesis, e_set, include_extended_s_set=True):
+    from aalpy.learning_algs.deterministic_passive.rpni_helper_functions import extract_unique_sequences, createPTA
+    data = data_from_l_star_E_set(hypothesis, e_set, include_extended_s_set)
+    pruned_data = []
+    for seq in extract_unique_sequences(createPTA(data, automaton_type='mealy')):
+        pruned_data.append([io[0] for io in seq])
+    return pruned_data
 
 
 def generate_random_data(model, num_sequences, min_sequence_len, max_sequence_len):
@@ -65,6 +75,8 @@ for model_name, model in bluetooth_models:
     # data = data_from_l_star_E_set(l_star_model, e_set, include_extended_s_set=True)
     # data = data_from_computed_e_set(l_star_model, include_extended_s_set=True)
     data = generate_random_data(model, num_sequences=learning_queries - 100, min_sequence_len=10, max_sequence_len=20)
+    data = minimized_char_set_data(l_star_model, e_set, include_extended_s_set=True)
+    # print(learning_queries - len(data))
 
     rpni_model = run_RPNI(data, automaton_type='mealy', input_completeness='sink_state', print_info=True)
 
