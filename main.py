@@ -3,8 +3,8 @@ from os import listdir
 
 from aalpy.SULs import MealySUL
 from aalpy.learning_algs import run_Lstar, run_RPNI
-from aalpy.oracles import RandomWordEqOracle
-from aalpy.utils import load_automaton_from_file, compare_automata
+from aalpy.oracles import RandomWordEqOracle, StatePrefixEqOracle
+from aalpy.utils import load_automaton_from_file, compare_automata, generate_test_cases
 
 
 def data_from_l_star_E_set(hypothesis, e_set, include_extended_s_set=True):
@@ -52,6 +52,38 @@ def generate_random_data(model, num_sequences, min_sequence_len, max_sequence_le
     return data
 
 
+def compare_learned_models(model_1, model_2, num_tests, min_test_len=3, max_test_len=16):
+    diff = 0
+    inputs = model_1.get_input_alphabet()
+    for _ in range(num_tests):
+        test_case = random.choices(inputs, k=random.randint(min_test_len, max_test_len))
+        o_1 = model_1.compute_output_seq(model_1.initial_state, test_case)
+        o_2 = model_2.compute_output_seq(model_2.initial_state, test_case)
+
+        if o_1 != o_2:
+            diff += 1
+
+    return diff / num_tests
+
+
+def compare_learned_models_state_coverage(model_1, model_2, num_tests):
+    diff = 0
+    inputs = model_1.get_input_alphabet()
+
+    walks_per_state = int(num_tests / model_1.size)
+    eq_oracle = StatePrefixEqOracle(inputs, sul=None, walks_per_state=walks_per_state, walk_len=10)
+    test_cases = [tc[0] for tc in generate_test_cases(model_1, eq_oracle)]
+
+    for test_case in test_cases:
+        o_1 = model_1.compute_output_seq(model_1.initial_state, test_case)
+        o_2 = model_2.compute_output_seq(model_2.initial_state, test_case)
+
+        if o_1 != o_2:
+            diff += 1
+
+    return diff / len(test_cases)
+
+
 bluetooth_models = []
 
 for dot_file in listdir('./automata'):
@@ -74,8 +106,8 @@ for model_name, model in bluetooth_models:
 
     # data = data_from_l_star_E_set(l_star_model, e_set, include_extended_s_set=True)
     # data = data_from_computed_e_set(l_star_model, include_extended_s_set=True)
-    data = generate_random_data(model, num_sequences=learning_queries - 100, min_sequence_len=10, max_sequence_len=20)
     data = minimized_char_set_data(l_star_model, e_set, include_extended_s_set=True)
+    data = generate_random_data(model, num_sequences=learning_queries - 100, min_sequence_len=10, max_sequence_len=20)
     # print(learning_queries - len(data))
 
     rpni_model = run_RPNI(data, automaton_type='mealy', input_completeness='sink_state', print_info=True)
@@ -88,12 +120,10 @@ for model_name, model in bluetooth_models:
 
     cex = compare_automata(rpni_model, l_star_model)
     if cex:
-        cex = cex[0]
+        model_diff = compare_learned_models(l_star_model, rpni_model, num_tests=10000)
+        # model_diff = compare_learned_models_state_coverage(l_star_model, rpni_model, num_tests=10000)
         print('Counterexample found between models learned by RPNI and L*.')
-        print('Inputs :', cex)
-        print('L*     :', l_star_model.compute_output_seq(l_star_model.initial_state, cex))
-        print('RPNI   :', rpni_model.compute_output_seq(rpni_model.initial_state, cex))
-
+        print(f'Models display different bahaviour for {round(model_diff * 100, 2)}% of test cases.')
     else:
         print('RPNI and L* learned same models.')
         if rpni_model.size != l_star_model.size:
