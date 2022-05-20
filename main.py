@@ -24,8 +24,8 @@ repeats_per_experiment = 5
 verbose = False
 
 for model_name, model in bluetooth_models:
-    experiment_data = defaultdict(list)
-    l_star_model_size, learning_queries, queries_to_fill_holes, cache_hits = 0, 0, 0, 0
+    l_star_experiment_data = list()
+    rpni_experiment_data = defaultdict(list)
 
     for _ in range(repeats_per_experiment):
         # L*
@@ -72,15 +72,18 @@ for model_name, model in bluetooth_models:
             'rpni_model_minimized_char_set': data_minimized_char_set
         }
 
+        # L* with caching
+        queries_to_fill_holes, cache_hits = l_star_with_populated_cache(model, data_random_l_star_length)
+        l_star_experiment_data.append((l_star_model.size,learning_queries, queries_to_fill_holes, cache_hits))
+
+        if verbose:
+            print(f'L* with caching initialed with random data of size {learning_queries}: '
+                  f'queries {queries_to_fill_holes}, cache hits {cache_hits}')
+
         if verbose:
             print(f'Experiment: {model_name}')
             print(f'L* learned {l_star_model.size} state model.')
             print(f'Number of queries required by L*  : {learning_queries}')
-
-        queries_to_fill_holes, cache_hits = l_star_with_populated_cache(model, data_random_l_star_length)
-        if verbose:
-            print(f'L* with caching initialed with random data of size {learning_queries}: '
-                  f'queries {queries_to_fill_holes}, cache hits {cache_hits}')
 
         for data_name, data in rpni_data.items():
             rpni_model = run_RPNI(data, automaton_type='mealy', input_completeness='sink_state',
@@ -113,18 +116,27 @@ for model_name, model in bluetooth_models:
                 if rpni_model.size != l_star_model.size and verbose:
                     print(f'    Models do have different size.\n    RPNI {rpni_model.size} vs. L* {l_star_model.size}')
 
-            experiment_data[data_name].append((rpni_model.size, coverage_diff, random_diff))
+            rpni_experiment_data[data_name].append((rpni_model.size, coverage_diff, random_diff))
 
     print(f'------------------{model_name}------------------')
-    print(f"L* model size: {l_star_model_size}")
-    print(f'L* with caching initialed with random data of size {learning_queries}:\n'
-          f'  queries    : {queries_to_fill_holes}\n'
-          f'  cache hits : {cache_hits}')
-    for experiment, data in experiment_data.items():
+    if len(set([i[0] for i in l_star_experiment_data])) != 1:
+        print(f"L* did not always learn model of the same size: {[i[0] for i in l_star_experiment_data]}")
+
+    print(f"L* model size: {l_star_experiment_data[0][0]}")
+
+    avg_queries = mean([i[1] for i in l_star_experiment_data])
+    avg_query_fill = mean([i[2] for i in l_star_experiment_data])
+    avg_cache = mean([i[3] for i in l_star_experiment_data])
+
+    print(f'L* with caching initialed with random data of size {avg_queries}:\n'
+          f'  queries    : {avg_query_fill}\n'
+          f'  cache hits : {avg_cache}')
+
+    for experiment, data in rpni_experiment_data.items():
         print(f'{experiment} data summary')
         print(f'RPNI Model sizes {[i[0] for i in data]}')
-        print(f'Coverage testing non-conformance: {round(mean([i[1] for i in data]) * 100, 2)}%')
-        print(f'Random   testing non-conformance: {round(mean([i[2] for i in data]) * 100, 2)}%')
+        print(f'Coverage testing conformance: {round(100 - mean([i[1] for i in data]) * 100, 2)}%')
+        print(f'Random   testing conformance: {round(100 - mean([i[2] for i in data]) * 100, 2)}%')
 
     if verbose:
         print('----------------------------------------------------------------')
