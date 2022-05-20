@@ -124,13 +124,10 @@ for model_name, model in bluetooth_models:
 
     print(f"L* model size: {l_star_experiment_data[0][0]}")
 
-    avg_queries = mean([i[1] for i in l_star_experiment_data])
-    avg_query_fill = mean([i[2] for i in l_star_experiment_data])
-    avg_cache = mean([i[3] for i in l_star_experiment_data])
-
-    print(f'L* with caching initialed with random data of size {avg_queries}:\n'
-          f'  queries    : {avg_query_fill}\n'
-          f'  cache hits : {avg_cache}')
+    print(f'L* with caching initialed with random data of size equal to data recquired for L*.\n'
+          f'  # random samples: {[i[1] for i in l_star_experiment_data]}\n'
+          f'  # queries       : {[i[2] for i in l_star_experiment_data]}\n'
+          f'  # cache hits    : {[i[3] for i in l_star_experiment_data]}')
 
     for experiment, data in rpni_experiment_data.items():
         print(f'{experiment} data summary')
