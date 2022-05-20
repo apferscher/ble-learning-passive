@@ -1,5 +1,7 @@
+from collections import defaultdict
 from math import ceil
 from os import listdir
+from statistics import mean
 
 from aalpy.learning_algs import run_RPNI
 from aalpy.utils import load_automaton_from_file, compare_automata
@@ -18,81 +20,111 @@ num_tests = 10000
 test_cases_coverage = create_test_cases(bluetooth_models, num_tests, 'coverage')
 test_cases_random = create_test_cases(bluetooth_models, num_tests, 'random')
 
-repeats_per_experiment = 10
+repeats_per_experiment = 5
+verbose = False
 
 for model_name, model in bluetooth_models:
-    # L*
-    sul = MealySUL(model)
-    alphabet = model.get_input_alphabet()
-    eq_oracle = RandomWordEqOracle(alphabet, sul, num_walks=100, min_walk_len=4, max_walk_len=8)
+    experiment_data = defaultdict(list)
+    l_star_model_size, learning_queries, queries_to_fill_holes, cache_hits = 0, 0, 0, 0
 
-    l_star_model, data = run_Lstar(alphabet, sul, eq_oracle, 'mealy', print_level=0, return_data=True)
+    for _ in range(repeats_per_experiment):
+        # L*
+        sul = MealySUL(model)
+        alphabet = model.get_input_alphabet()
+        eq_oracle = RandomWordEqOracle(alphabet, sul, num_walks=100, min_walk_len=4, max_walk_len=8)
 
-    # L* info
-    e_set = data['characterization set']
-    output_queries = data['queries_learning']
-    eq_oracle_queries = data['queries_eq_oracle']
+        l_star_model, data = run_Lstar(alphabet, sul, eq_oracle, 'mealy', print_level=0, return_data=True)
+        l_star_model_size = l_star_model.size
 
-    learning_queries = output_queries + eq_oracle_queries
-    learning_steps = data['steps_learning'] + data['steps_eq_oracle'] // ceil(output_queries + eq_oracle_queries)
-    max_sequence_length = learning_steps * 2
+        # L* info
+        e_set = data['characterization set']
+        output_queries = data['queries_learning']
+        eq_oracle_queries = data['queries_eq_oracle']
 
-    data_l_star = data_from_computed_e_set(l_star_model, include_extended_s_set=True)
+        learning_queries = output_queries + eq_oracle_queries
+        avg_query_steps = ceil((data['steps_learning'] + data['steps_eq_oracle']) / learning_queries) + 1
 
-    data_random_l_star_length = generate_random_data(model, num_sequences=learning_queries, min_sequence_len=2,
-                                                     max_sequence_len=max_sequence_length)
+        # long sequance
+        max_sequence_length = avg_query_steps * 4
 
-    data_random_large_set = generate_random_data(model, num_sequences=(learning_queries * 2), min_sequence_len=5,
-                                                 max_sequence_len=20)
+        data_l_star = data_from_computed_e_set(l_star_model, include_extended_s_set=True)
 
-    data_random_fewer_longer_seq = generate_random_data(model, num_sequences=int(learning_queries * 0.8),
-                                                        min_sequence_len=10, max_sequence_len=25)
+        data_random_l_star_length = generate_random_data(model, num_sequences=learning_queries, min_sequence_len=2,
+                                                         max_sequence_len=max_sequence_length)
 
-    data_random_long_traces = generate_random_data(model, num_sequences=ceil(learning_queries / 2),
-                                                   min_sequence_len=l_star_model.size,
-                                                   max_sequence_len=(l_star_model.size * 2))
+        data_random_large_set = generate_random_data(model, num_sequences=(learning_queries * 2), min_sequence_len=5,
+                                                     max_sequence_len=20)
 
-    data_minimized_char_set = minimized_char_set_data(l_star_model, include_extended_s_set=True)
+        data_random_fewer_longer_seq = generate_random_data(model, num_sequences=int(learning_queries * 0.8),
+                                                            min_sequence_len=10, max_sequence_len=25)
 
-    rpni_data = {
-        'rpni_model_random_l_star_length': data_random_l_star_length,
-        'rpni_model_random_large_set': data_random_large_set,
-        'rpni_model_random_long_traces': data_random_long_traces,
-        'rpni_model_l_star': data_l_star,
-        'rpni_model_minimized_char_set': data_minimized_char_set
-    }
+        data_random_long_traces = generate_random_data(model, num_sequences=ceil(learning_queries / 2),
+                                                       min_sequence_len=l_star_model.size,
+                                                       max_sequence_len=(l_star_model.size * 2))
 
-    print(f'Experiment: {model_name}')
-    print(f'L* learned {l_star_model.size} state model.')
-    print(f'Number of queries required by L*  : {learning_queries}')
+        data_minimized_char_set = minimized_char_set_data(l_star_model, include_extended_s_set=True)
 
-    queries_to_fill_holes, cache_hits = l_star_with_populated_cache(model,  data_random_l_star_length)
-    print(f'L* with caching initialed with random data of size {learning_queries}: '
-          f'queries {queries_to_fill_holes}, cache hits {cache_hits}')
+        rpni_data = {
+            'rpni_model_random_l_star_length': data_random_l_star_length,
+            'rpni_model_random_large_set': data_random_large_set,
+            'rpni_model_random_long_traces': data_random_long_traces,
+            'rpni_model_l_star': data_l_star,
+            'rpni_model_minimized_char_set': data_minimized_char_set
+        }
 
-    for data_name, data in rpni_data.items():
-        rpni_model = run_RPNI(data, automaton_type='mealy', input_completeness='sink_state',
-                              print_info=False)
+        if verbose:
+            print(f'Experiment: {model_name}')
+            print(f'L* learned {l_star_model.size} state model.')
+            print(f'Number of queries required by L*  : {learning_queries}')
 
-        print('-' * 5 + f' {data_name} ' + '-' * 5)
-        print(f'RPNI Learned {rpni_model.size} state model.')
-        print(f'Number of samples provided to RPNI: {len(data)}')
+        queries_to_fill_holes, cache_hits = l_star_with_populated_cache(model, data_random_l_star_length)
+        if verbose:
+            print(f'L* with caching initialed with random data of size {learning_queries}: '
+                  f'queries {queries_to_fill_holes}, cache hits {cache_hits}')
 
-        if set(rpni_model.get_input_alphabet()) != set(l_star_model.get_input_alphabet()):
-            print('Learned models do not have the same input alphabets => RPNI model is not input complete.')
-            continue
+        for data_name, data in rpni_data.items():
+            rpni_model = run_RPNI(data, automaton_type='mealy', input_completeness='sink_state',
+                                  print_info=False)
 
-        cex = compare_automata(rpni_model, l_star_model)
-        if cex:
-            # model_diff = compare_learned_models(l_star_model, rpni_model, num_tests=10000)
-            print('Counterexample found between models learned by RPNI and L*.')
-            coverage_diff = compare_learned_models(l_star_model, rpni_model, test_cases_coverage[model_name])
-            print(f'Coverage test cases: {round(coverage_diff * 100, 2)}% non-conforming test-cases.')
-            random_diff = compare_learned_models(l_star_model, rpni_model, test_cases_random[model_name])
-            print(f'Random test cases: {round(random_diff * 100, 2)}% non-conforming test-cases.')
-        else:
-            print('RPNI and L* learned same models.')
-            if rpni_model.size != l_star_model.size:
-                print(f'    Models do have different size.\n    RPNI {rpni_model.size} vs. L* {l_star_model.size}')
+            if verbose:
+                print('-' * 5 + f' {data_name} ' + '-' * 5)
+                print(f'RPNI Learned {rpni_model.size} state model.')
+                print(f'Number of samples provided to RPNI: {len(data)}')
 
-    print('----------------------------------------------------------------')
+            if set(rpni_model.get_input_alphabet()) != set(l_star_model.get_input_alphabet()):
+                if verbose:
+                    print('Learned models do not have the same input alphabets => RPNI model is not input complete.')
+                continue
+
+            cex = compare_automata(rpni_model, l_star_model)
+
+            coverage_diff, random_diff = 0, 0
+            if cex:
+                # model_diff = compare_learned_models(l_star_model, rpni_model, num_tests=10000)
+                coverage_diff = compare_learned_models(l_star_model, rpni_model, test_cases_coverage[model_name])
+                random_diff = compare_learned_models(l_star_model, rpni_model, test_cases_random[model_name])
+                if verbose:
+                    print('Counterexample found between models learned by RPNI and L*.')
+                    print(f'Coverage test cases: {round(coverage_diff * 100, 2)}% non-conforming test-cases.')
+                    print(f'Random test cases  : {round(random_diff * 100, 2)}% non-conforming test-cases.')
+            else:
+                if verbose:
+                    print('RPNI and L* learned same models.')
+                if rpni_model.size != l_star_model.size and verbose:
+                    print(f'    Models do have different size.\n    RPNI {rpni_model.size} vs. L* {l_star_model.size}')
+
+            experiment_data[data_name].append((rpni_model.size, coverage_diff, random_diff))
+
+    print(f'------------------{model_name}------------------')
+    for experiment, data in experiment_data.items():
+        print(f"L* model size: {l_star_model_size}")
+        print(f'L* with caching initialed with random data of size {learning_queries}:\n'
+              f'  queries    : {queries_to_fill_holes}\n'
+              f'  cache hits : {cache_hits}')
+        print(f'{experiment} data summary')
+        print(f'RPNI Model sizes {[i[0] for i in data]}')
+        print(f'Coverage testing non-conformance: {round(mean([i[1] for i in data]) * 100, 2)}%')
+        print(f'Random   testing non-conformance: {round(mean([i[2] for i in data]) * 100, 2)}%')
+
+    if verbose:
+        print('----------------------------------------------------------------')
