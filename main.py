@@ -35,6 +35,7 @@ def data_from_computed_e_set(hypothesis, include_extended_s_set=True):
 
 def minimized_char_set_data(hypothesis, e_set, include_extended_s_set=True):
     from aalpy.learning_algs.deterministic_passive.rpni_helper_functions import extract_unique_sequences, createPTA
+    e_set = hypothesis.compute_characterization_set()
     data = data_from_l_star_E_set(hypothesis, e_set, include_extended_s_set)
     pruned_data = []
     for seq in extract_unique_sequences(createPTA(data, automaton_type='mealy')):
