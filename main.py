@@ -14,7 +14,9 @@ for dot_file in listdir('./automata'):
     model = load_automaton_from_file(f'./automata/{dot_file}', automaton_type='mealy')
     bluetooth_models.append((model_name, model))
 
-test_cases = create_test_cases(bluetooth_models, 10000)
+num_tests = 10000
+test_cases_coverage = create_test_cases(bluetooth_models, num_tests, 'coverage')
+test_cases_random = create_test_cases(bluetooth_models, num_tests, 'random')
 
 for model_name, model in bluetooth_models:
     # L*
@@ -39,8 +41,11 @@ for model_name, model in bluetooth_models:
     data_random_l_star_length = generate_random_data(model, num_sequences=learning_queries, min_sequence_len=1,
                                                      max_sequence_len=max_sequence_length)
 
-    data_random_large_set = generate_random_data(model, num_sequences=(learning_queries * 2), min_sequence_len=1,
-                                                 max_sequence_len=max_sequence_length)
+    data_random_large_set = generate_random_data(model, num_sequences=(learning_queries * 2), min_sequence_len=5,
+                                                 max_sequence_len=20)
+
+    data_random_fewer_longer_seq = generate_random_data(model, num_sequences=int(learning_queries * 0.75),
+                                                        min_sequence_len=10, max_sequence_len=25)
 
     data_random_long_traces = generate_random_data(model, num_sequences=ceil(learning_queries / 2),
                                                    min_sequence_len=l_star_model.size,
@@ -48,36 +53,23 @@ for model_name, model in bluetooth_models:
 
     data_minimized_char_set = minimized_char_set_data(l_star_model, include_extended_s_set=True)
 
-    # print(learning_queries - len(data))
-
-    rnpi_models = {
-        'rpni_model_random_l_star_length': (
-            run_RPNI(data_random_l_star_length, automaton_type='mealy', input_completeness='sink_state',
-                     print_info=False),
-            data_random_l_star_length),
-        'rpni_model_andom_large_set': (
-            run_RPNI(data_random_large_set, automaton_type='mealy', input_completeness='sink_state', print_info=False),
-            data_random_large_set),
-        'rpni_model_random_long_traces': (
-            run_RPNI(data_random_long_traces, automaton_type='mealy', input_completeness='sink_state',
-                     print_info=False),
-            data_random_long_traces),
-        'rpni_model_l_star': (
-            run_RPNI(data_l_star, automaton_type='mealy', input_completeness='sink_state', print_info=False),
-            data_l_star),
-        'rpni_model_minimized_char_set': (
-            run_RPNI(data_minimized_char_set, automaton_type='mealy', input_completeness='sink_state',
-                     print_info=False),
-            data_minimized_char_set)}
+    rpni_data = {
+        'rpni_model_random_l_star_length': data_random_l_star_length,
+        'rpni_model_random_large_set': data_random_large_set,
+        'rpni_model_random_long_traces': data_random_long_traces,
+        'rpni_model_l_star': data_l_star,
+        'rpni_model_minimized_char_set': data_minimized_char_set
+    }
 
     print(f'Experiment: {model_name}')
     print(f'L* learned {l_star_model.size} state model.')
     print(f'Number of queries required by L*  : {learning_queries}')
 
-    for k in rnpi_models.keys():
-        rpni_model = rnpi_models[k][0]
-        data = rnpi_models[k][1]
-        print('-' * 5 + f' {k} ' + '-' * 5)
+    for data_name, data in rpni_data.items():
+        rpni_model = run_RPNI(data, automaton_type='mealy', input_completeness='sink_state',
+                              print_info=False)
+
+        print('-' * 5 + f' {data_name} ' + '-' * 5)
         print(f'RPNI Learned {rpni_model.size} state model.')
         print(f'Number of samples provided to RPNI: {len(data)}')
 
@@ -88,9 +80,11 @@ for model_name, model in bluetooth_models:
         cex = compare_automata(rpni_model, l_star_model)
         if cex:
             # model_diff = compare_learned_models(l_star_model, rpni_model, num_tests=10000)
-            model_diff = compare_learned_models(l_star_model, rpni_model, test_cases[model_name])
             print('Counterexample found between models learned by RPNI and L*.')
-            print(f'Models display different bahaviour for {round(model_diff * 100, 2)}% of test cases.')
+            coverage_diff = compare_learned_models(l_star_model, rpni_model, test_cases_coverage[model_name])
+            print(f'Coverage test cases: {round(coverage_diff * 100, 2)}% non-conforming test-cases.')
+            random_diff = compare_learned_models(l_star_model, rpni_model, test_cases_random[model_name])
+            print(f'Random test cases: {round(random_diff * 100, 2)}% non-conforming test-cases.')
         else:
             print('RPNI and L* learned same models.')
             if rpni_model.size != l_star_model.size:
