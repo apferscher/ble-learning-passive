@@ -61,7 +61,10 @@ def l_star_with_populated_cache(model, cache_data):
     alphabet = model.get_input_alphabet()
     eq_oracle = RandomWordEqOracle(alphabet, sul, num_walks=100, min_walk_len=4, max_walk_len=8)
 
-    l_star_model, data = run_Lstar(alphabet, sul, eq_oracle, 'mealy', print_level=1, cache_and_non_det_check=False,
+    l_star_model, data = run_Lstar(alphabet, sul, eq_oracle, 'mealy', print_level=0, cache_and_non_det_check=False,
                                    return_data=True)
 
-    return l_star_model, data, sul.num_cached_queries
+    cache_hits = sul.num_cached_queries
+    queries_posed = data['queries_learning'] + data['queries_eq_oracle'] - cache_hits
+
+    return queries_posed, cache_hits

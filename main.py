@@ -18,6 +18,8 @@ num_tests = 10000
 test_cases_coverage = create_test_cases(bluetooth_models, num_tests, 'coverage')
 test_cases_random = create_test_cases(bluetooth_models, num_tests, 'random')
 
+repeats_per_experiment = 10
+
 for model_name, model in bluetooth_models:
     # L*
     sul = MealySUL(model)
@@ -32,19 +34,18 @@ for model_name, model in bluetooth_models:
     eq_oracle_queries = data['queries_eq_oracle']
 
     learning_queries = output_queries + eq_oracle_queries
-    learning_steps = int(
-        ceil((output_queries + eq_oracle_queries) / (data['steps_learning'] + data['steps_eq_oracle'])))
+    learning_steps = data['steps_learning'] + data['steps_eq_oracle'] // ceil(output_queries + eq_oracle_queries)
     max_sequence_length = learning_steps * 2
 
     data_l_star = data_from_computed_e_set(l_star_model, include_extended_s_set=True)
 
-    data_random_l_star_length = generate_random_data(model, num_sequences=learning_queries, min_sequence_len=1,
+    data_random_l_star_length = generate_random_data(model, num_sequences=learning_queries, min_sequence_len=2,
                                                      max_sequence_len=max_sequence_length)
 
     data_random_large_set = generate_random_data(model, num_sequences=(learning_queries * 2), min_sequence_len=5,
                                                  max_sequence_len=20)
 
-    data_random_fewer_longer_seq = generate_random_data(model, num_sequences=int(learning_queries * 0.75),
+    data_random_fewer_longer_seq = generate_random_data(model, num_sequences=int(learning_queries * 0.8),
                                                         min_sequence_len=10, max_sequence_len=25)
 
     data_random_long_traces = generate_random_data(model, num_sequences=ceil(learning_queries / 2),
@@ -64,6 +65,10 @@ for model_name, model in bluetooth_models:
     print(f'Experiment: {model_name}')
     print(f'L* learned {l_star_model.size} state model.')
     print(f'Number of queries required by L*  : {learning_queries}')
+
+    queries_to_fill_holes, cache_hits = l_star_with_populated_cache(model,  data_random_l_star_length)
+    print(f'L* with caching initialed with random data of size {learning_queries}: '
+          f'queries {queries_to_fill_holes}, cache hits {cache_hits}')
 
     for data_name, data in rpni_data.items():
         rpni_model = run_RPNI(data, automaton_type='mealy', input_completeness='sink_state',
