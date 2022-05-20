@@ -116,11 +116,11 @@ for model_name, model in bluetooth_models:
             experiment_data[data_name].append((rpni_model.size, coverage_diff, random_diff))
 
     print(f'------------------{model_name}------------------')
+    print(f"L* model size: {l_star_model_size}")
+    print(f'L* with caching initialed with random data of size {learning_queries}:\n'
+          f'  queries    : {queries_to_fill_holes}\n'
+          f'  cache hits : {cache_hits}')
     for experiment, data in experiment_data.items():
-        print(f"L* model size: {l_star_model_size}")
-        print(f'L* with caching initialed with random data of size {learning_queries}:\n'
-              f'  queries    : {queries_to_fill_holes}\n'
-              f'  cache hits : {cache_hits}')
         print(f'{experiment} data summary')
         print(f'RPNI Model sizes {[i[0] for i in data]}')
         print(f'Coverage testing non-conformance: {round(mean([i[1] for i in data]) * 100, 2)}%')
