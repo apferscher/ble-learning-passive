@@ -11,8 +11,6 @@ from model_comparison import *
 
 bluetooth_models = []
 
-# TODO make everything consistent with new RPNI version in 1.2.8
-
 for dot_file in listdir('./automata'):
     model_name = dot_file[:-4]
     model = load_automaton_from_file(f'./automata/{dot_file}', automaton_type='mealy')
