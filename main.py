@@ -42,25 +42,24 @@ for model_name, model in bluetooth_models:
         eq_oracle_queries = data['queries_eq_oracle']
 
         learning_queries = output_queries + eq_oracle_queries
-        avg_query_steps = ceil((data['steps_learning'] + data['steps_eq_oracle']) / learning_queries) + 1
 
-        # long sequance
-        max_sequence_length = avg_query_steps * 4
+        avg_query_steps = (data['steps_learning'] + data['steps_eq_oracle']) / learning_queries
+
+        # long sequence  
+        max_sequence_length = round((avg_query_steps - 0.5) * 2)
 
         data_l_star = data_from_computed_e_set(l_star_model, include_extended_s_set=True)
 
-        data_random_l_star_length = generate_random_data(model, num_sequences=learning_queries, min_sequence_len=2,
-                                                         max_sequence_len=max_sequence_length)
+        data_random_l_star_length = generate_random_data(model, num_sequences=learning_queries, min_sequence_len=1,
+                                                         max_sequence_len=max_sequence_length, prefix_closed=True)
 
-        data_random_large_set = generate_random_data(model, num_sequences=(learning_queries * 2), min_sequence_len=5,
-                                                     max_sequence_len=20)
-
-        data_random_fewer_longer_seq = generate_random_data(model, num_sequences=int(learning_queries * 0.8),
-                                                            min_sequence_len=10, max_sequence_len=25)
+        data_random_large_set = generate_random_data(model, num_sequences=(learning_queries * 2), min_sequence_len=1,
+                                                     max_sequence_len=max_sequence_length)
 
         data_random_long_traces = generate_random_data(model, num_sequences=ceil(learning_queries / 2),
                                                        min_sequence_len=l_star_model.size,
-                                                       max_sequence_len=(l_star_model.size * 2))
+                                                       max_sequence_len=(l_star_model.size * 
+                                                       4))
 
         data_minimized_char_set = minimized_char_set_data(l_star_model, include_extended_s_set=True)
 

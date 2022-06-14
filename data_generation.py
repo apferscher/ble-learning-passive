@@ -1,5 +1,7 @@
 import random
 
+from math import ceil
+
 from aalpy.SULs import MealySUL
 from aalpy.base.SUL import CacheSUL
 from aalpy.learning_algs import run_Lstar
@@ -65,6 +67,10 @@ def generate_random_data(model, num_sequences, min_sequence_len, max_sequence_le
     input_alphabet = model.get_input_alphabet()
     random_sequences = [random.choices(input_alphabet, k=random.randint(min_sequence_len, max_sequence_len))
                         for _ in range(num_sequences)]
+
+    sequence_step_sum = sum([len(i) for i in random_sequences])
+
+    average_length = sequence_step_sum / num_sequences
 
     if prefix_closed:
         prefix_closed_seq = set()
