@@ -1,7 +1,7 @@
 from collections import defaultdict
 from math import ceil
 from os import listdir
-from statistics import mean
+from statistics import mean, mode
 
 from aalpy.learning_algs import run_RPNI
 from aalpy.utils import load_automaton_from_file, compare_automata
@@ -10,6 +10,10 @@ from data_generation import *
 from model_comparison import *
 
 bluetooth_models = []
+
+#model = load_automaton_from_file(f'./automata/CYW43455.dot', #automaton_type='mealy')
+#model_name = 'CYW43455'
+#bluetooth_models.append((model_name, model))
 
 for dot_file in listdir('./automata'):
     model_name = dot_file[:-4]
@@ -21,7 +25,7 @@ test_cases_coverage = create_test_cases(bluetooth_models, num_tests, 'coverage')
 test_cases_random = create_test_cases(bluetooth_models, num_tests, 'random')
 
 repeats_per_experiment = 5
-verbose = False
+verbose = True
 
 for model_name, model in bluetooth_models:
     l_star_experiment_data = list()
@@ -31,7 +35,8 @@ for model_name, model in bluetooth_models:
         # L*
         sul = MealySUL(model)
         alphabet = model.get_input_alphabet()
-        eq_oracle = RandomWordEqOracle(alphabet, sul, num_walks=100, min_walk_len=4, max_walk_len=8)
+        #eq_oracle = RandomWordEqOracle(alphabet, sul, num_walks=100, min_walk_len=4, max_walk_len=8)
+        eq_oracle = StatePrefixEqOracle(alphabet, sul, walks_per_state=10, walk_len=10)
 
         l_star_model, data = run_Lstar(alphabet, sul, eq_oracle, 'mealy', print_level=0, return_data=True)
         l_star_model_size = l_star_model.size
@@ -45,34 +50,56 @@ for model_name, model in bluetooth_models:
 
         avg_query_steps = (data['steps_learning'] + data['steps_eq_oracle']) / learning_queries
 
+        if verbose:
+            print(f'L* data size: {learning_queries}')
+            print(f'Average length of L* samples: {avg_query_steps}')
+
         # long sequence  
         max_sequence_length = round((avg_query_steps - 0.5) * 2)
 
-        data_l_star = data_from_computed_e_set(l_star_model, include_extended_s_set=True)
+        rpni_model_l_star_str = "rpni_model_l_star"
+        rpni_model_random_l_star_length_str = "rpni_model_random_l_star_length"
+        rpni_model_random_large_set_str = "rpni_model_random_large_set"
+        rpni_model_random_long_traces_str = "rpni_model_random_long_traces"
+        rpni_model_minimized_char_set_str = "rpni_model_minimized_char_set"
+        
+        if verbose:
+            print('-' * 5 + f' data gen: {rpni_model_l_star_str} ' + '-' * 5)
 
-        data_random_l_star_length = generate_random_data(model, num_sequences=learning_queries, min_sequence_len=1,
-                                                         max_sequence_len=max_sequence_length, prefix_closed=True)
+        data_l_star = data_from_computed_e_set(l_star_model, include_extended_s_set=True, verbose = verbose)
+        # average length, runtime, length longest trace
 
+        if verbose:
+            print('-' * 5 + f' data gen: {rpni_model_random_l_star_length_str} ' + '-' * 5)
+        data_random_l_star_length = generate_random_data(model, num_sequences=learning_queries, min_sequence_len=1, max_sequence_len=max_sequence_length, verbose=verbose)
+
+
+        if verbose:
+            print('-' * 5 + f' data gen: {rpni_model_random_large_set_str} ' + '-' * 5)
         data_random_large_set = generate_random_data(model, num_sequences=(learning_queries * 2), min_sequence_len=1,
-                                                     max_sequence_len=max_sequence_length)
+                                                     max_sequence_len=max_sequence_length, verbose=verbose)
 
+        if verbose:
+            print('-' * 5 + f' data gen: {rpni_model_random_long_traces_str} ' + '-' * 5)
         data_random_long_traces = generate_random_data(model, num_sequences=ceil(learning_queries / 2),
                                                        min_sequence_len=l_star_model.size,
                                                        max_sequence_len=(l_star_model.size * 
-                                                       4))
+                                                       2), verbose=verbose)
 
-        data_minimized_char_set = minimized_char_set_data(l_star_model, include_extended_s_set=True)
+        if verbose:
+            print('-' * 5 + f' data gen: {rpni_model_minimized_char_set_str} ' + '-' * 5)
+        data_minimized_char_set = minimized_char_set_data(l_star_model, include_extended_s_set=True, verbose=verbose)
 
         rpni_data = {
-            'rpni_model_random_l_star_length': data_random_l_star_length,
-            'rpni_model_random_large_set': data_random_large_set,
-            'rpni_model_random_long_traces': data_random_long_traces,
-            'rpni_model_l_star': data_l_star,
-            'rpni_model_minimized_char_set': data_minimized_char_set
+            rpni_model_l_star_str: data_l_star,
+            rpni_model_random_l_star_length_str: data_random_l_star_length,
+            rpni_model_random_large_set_str: data_random_large_set,
+            rpni_model_random_long_traces_str: data_random_long_traces,
+            rpni_model_minimized_char_set_str: data_minimized_char_set
         }
 
         # L* with caching
-        queries_to_fill_holes, cache_hits = l_star_with_populated_cache(model, data_random_l_star_length)
+        queries_to_fill_holes, cache_hits = l_star_with_populated_cache(model, data_random_l_star_length, eq_oracle)
         l_star_experiment_data.append((l_star_model.size,learning_queries, queries_to_fill_holes, cache_hits))
 
         if verbose:
@@ -85,13 +112,15 @@ for model_name, model in bluetooth_models:
             print(f'Number of queries required by L*  : {learning_queries}')
 
         for data_name, data in rpni_data.items():
+            if verbose:
+                print('-' * 5 + f' {data_name} ' + '-' * 5)
             rpni_model = run_RPNI(data, automaton_type='mealy', input_completeness='sink_state',
                                   print_info=False)
 
             if verbose:
-                print('-' * 5 + f' {data_name} ' + '-' * 5)
                 print(f'RPNI Learned {rpni_model.size} state model.')
-                print(f'Number of samples provided to RPNI: {len(data)}')
+                # wrong size
+                # print(f'Number of samples provided to RPNI: {len(data)}')
 
             if set(rpni_model.get_input_alphabet()) != set(l_star_model.get_input_alphabet()):
                 if verbose:
