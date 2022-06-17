@@ -1,3 +1,5 @@
+from math import ceil
+
 from aalpy.oracles import StatePrefixEqOracle, RandomWordEqOracle
 from aalpy.utils import generate_test_cases
 
@@ -20,11 +22,13 @@ def create_test_cases(experiment_list, num_test_cases, method):
     test_cases = dict()
     for model_name, model in experiment_list:
         inputs = model.get_input_alphabet()
-        walks_per_state = int(num_test_cases / model.size)
+        walks_per_state = ceil(num_test_cases / model.size)
         if method == 'coverage':
             eq_oracle = StatePrefixEqOracle(inputs, sul=None, walks_per_state=walks_per_state, walk_len=10)
         else:
-            eq_oracle = RandomWordEqOracle(inputs, sul=None, num_walks=num_test_cases, min_walk_len=6, max_walk_len=16)
+            # min size: size of smallest model
+            # max size: doubled size of largest model
+            eq_oracle = RandomWordEqOracle(inputs, sul=None, num_walks=num_test_cases, min_walk_len=3, max_walk_len=16 * 2)
         test_cases[model_name] = [tc[0] for tc in generate_test_cases(model, eq_oracle)]
 
     return test_cases
