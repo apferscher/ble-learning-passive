@@ -62,6 +62,7 @@ for model_name, model in bluetooth_models:
         rpni_model_random_large_set_str = "rpni_model_random_large_set"
         rpni_model_random_long_traces_str = "rpni_model_random_long_traces"
         rpni_model_minimized_char_set_str = "rpni_model_minimized_char_set"
+        rpni_model_random_good_enough_str = "rpni_model_random_good_enough"
         
         if verbose:
             print('-' * 5 + f' data gen: {rpni_model_l_star_str} ' + '-' * 5)
@@ -81,10 +82,23 @@ for model_name, model in bluetooth_models:
 
         if verbose:
             print('-' * 5 + f' data gen: {rpni_model_random_long_traces_str} ' + '-' * 5)
-        data_random_long_traces = generate_random_data(model, num_sequences=ceil(learning_queries / 2),
+        data_random_long_traces = generate_random_data(model, num_sequences=learning_queries,
                                                        min_sequence_len=l_star_model.size,
                                                        max_sequence_len=(l_star_model.size * 
                                                        2), verbose=verbose)
+
+        
+        if verbose:
+            print('-' * 5 + f' data gen: {rpni_model_random_good_enough_str} ' + '-' * 5)
+
+        min_length_good_enough = max_sequence_length
+        max_length_good_enough = l_star_model_size + 10
+        if min_length_good_enough > max_length_good_enough:
+           min_length_good_enough = max_length_good_enough
+           max_length_good_enough = max_sequence_length
+           
+        
+        data_random_good_enough = generate_random_data(model, num_sequences= learning_queries, min_sequence_len=min_length_good_enough,max_sequence_len=max_length_good_enough, verbose=verbose)
 
         if verbose:
             print('-' * 5 + f' data gen: {rpni_model_minimized_char_set_str} ' + '-' * 5)
@@ -95,7 +109,8 @@ for model_name, model in bluetooth_models:
             rpni_model_random_l_star_length_str: data_random_l_star_length,
             rpni_model_random_large_set_str: data_random_large_set,
             rpni_model_random_long_traces_str: data_random_long_traces,
-            rpni_model_minimized_char_set_str: data_minimized_char_set
+            rpni_model_minimized_char_set_str: data_minimized_char_set,
+            rpni_model_random_good_enough_str: data_random_good_enough
         }
 
         # L* with caching
@@ -152,7 +167,7 @@ for model_name, model in bluetooth_models:
 
     print(f"L* model size: {l_star_experiment_data[0][0]}")
 
-    print(f'L* with caching initialed with random data of size equal to data recquired for L*.\n'
+    print(f'L* with caching initialed with random data of size equal to data required for L*.\n'
           f'  # random samples: {[i[1] for i in l_star_experiment_data]}\n'
           f'  # queries       : {[i[2] for i in l_star_experiment_data]}\n'
           f'  # cache hits    : {[i[3] for i in l_star_experiment_data]}')
