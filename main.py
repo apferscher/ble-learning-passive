@@ -1,7 +1,6 @@
 from collections import defaultdict
-from math import ceil
 from os import listdir
-from statistics import mean, mode
+from statistics import mean
 
 from aalpy.learning_algs import run_RPNI
 from aalpy.utils import load_automaton_from_file, compare_automata
@@ -11,7 +10,7 @@ from model_comparison import *
 
 bluetooth_models = []
 
-# model = load_automaton_from_file(f'./automata/CYW43455.dot', #automaton_type='mealy')
+# model = load_automaton_from_file(f'./automata/CYW43455.dot', automaton_type='mealy')
 # model_name = 'CYW43455'
 # bluetooth_models.append((model_name, model))
 
@@ -87,18 +86,18 @@ for model_name, model in bluetooth_models:
                                                        max_sequence_len=(l_star_model.size *
                                                                          2), verbose=verbose)
 
-
         if verbose:
             print('-' * 5 + f' data gen: {rpni_model_random_good_enough_str} ' + '-' * 5)
 
         min_length_good_enough = max_sequence_length
         max_length_good_enough = l_star_model_size + 10
         if min_length_good_enough > max_length_good_enough:
-           min_length_good_enough = max_length_good_enough
-           max_length_good_enough = max_sequence_length
+            min_length_good_enough = max_length_good_enough
+            max_length_good_enough = max_sequence_length
 
-
-        data_random_good_enough = generate_random_data(model, num_sequences= learning_queries, min_sequence_len=min_length_good_enough,max_sequence_len=max_length_good_enough, verbose=verbose)
+        data_random_good_enough = generate_random_data(model, num_sequences=learning_queries,
+                                                       min_sequence_len=min_length_good_enough,
+                                                       max_sequence_len=max_length_good_enough, verbose=verbose)
 
         if verbose:
             print('-' * 5 + f' data gen: {rpni_model_minimized_char_set_str} ' + '-' * 5)
@@ -146,7 +145,6 @@ for model_name, model in bluetooth_models:
 
             coverage_diff, random_diff = 0, 0
             if cex:
-                # model_diff = compare_learned_models(l_star_model, rpni_model, num_tests=10000)
                 coverage_diff = compare_learned_models(l_star_model, rpni_model, test_cases_coverage[model_name])
                 random_diff = compare_learned_models(l_star_model, rpni_model, test_cases_random[model_name])
                 if verbose:
@@ -175,9 +173,9 @@ for model_name, model in bluetooth_models:
     for experiment, data in rpni_experiment_data.items():
         print(f'{experiment} data summary')
         print(f'RPNI Model sizes {[i[0] for i in data]}')
-        print(f'Coverage testing conformance %: {[round(100 - i[1] * 100,2) for i in data]} '
+        print(f'Coverage testing conformance %: {[round(100 - i[1] * 100, 2) for i in data]} '
               f'Avg:{round(100 - mean([i[1] for i in data]) * 100, 2)}%')
-        print(f'Random   testing conformance %: {[round(100 - i[2] * 100,2) for i in data]} '
+        print(f'Random   testing conformance %: {[round(100 - i[2] * 100, 2) for i in data]} '
               f'Avg:{round(100 - mean([i[2] for i in data]) * 100, 2)}%')
 
     if verbose:

@@ -6,7 +6,7 @@ from aalpy.learning_algs import run_Lstar
 from aalpy.utils.HelperFunctions import all_prefixes
 
 
-def data_from_l_star_E_set(hypothesis, e_set, include_extended_s_set=True, prefix_closed=True,verbose = False):
+def data_from_l_star_E_set(hypothesis, e_set, include_extended_s_set=True, prefix_closed=True, verbose=False):
     observation_table_data = []
     prefixes = [state.prefix for state in hypothesis.states]
 
@@ -44,9 +44,9 @@ def data_from_l_star_E_set(hypothesis, e_set, include_extended_s_set=True, prefi
     return observation_table_data
 
 
-def data_from_computed_e_set(hypothesis, include_extended_s_set=True, prefix_closed=True, verbose = False):
-
-    return data_from_l_star_E_set(hypothesis, hypothesis.compute_characterization_set(), include_extended_s_set, prefix_closed, verbose)
+def data_from_computed_e_set(hypothesis, include_extended_s_set=True, prefix_closed=True, verbose=False):
+    return data_from_l_star_E_set(hypothesis, hypothesis.compute_characterization_set(), include_extended_s_set,
+                                  prefix_closed, verbose)
 
 
 def minimized_char_set_data(hypothesis, include_extended_s_set=True, prefix_closed=True, verbose=False):
@@ -77,7 +77,7 @@ def minimized_char_set_data(hypothesis, include_extended_s_set=True, prefix_clos
     return pruned_data
 
 
-def generate_random_data(model, num_sequences, min_sequence_len, max_sequence_len, verbose = False, prefix_closed=True):
+def generate_random_data(model, num_sequences, min_sequence_len, max_sequence_len, verbose=False, prefix_closed=True):
     data = []
     input_alphabet = model.get_input_alphabet()
     random_sequences = [random.choices(input_alphabet, k=random.randint(min_sequence_len, max_sequence_len))
