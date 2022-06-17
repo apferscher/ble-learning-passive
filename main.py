@@ -90,15 +90,9 @@ for model_name, model in bluetooth_models:
         
         if verbose:
             print('-' * 5 + f' data gen: {rpni_model_random_good_enough_str} ' + '-' * 5)
-
-        min_length_good_enough = max_sequence_length
-        max_length_good_enough = l_star_model_size + 10
-        if min_length_good_enough > max_length_good_enough:
-           min_length_good_enough = max_length_good_enough
-           max_length_good_enough = max_sequence_length
            
         
-        data_random_good_enough = generate_random_data(model, num_sequences= learning_queries, min_sequence_len=min_length_good_enough,max_sequence_len=max_length_good_enough, verbose=verbose)
+        data_random_good_enough = generate_random_data(model, num_sequences= learning_queries * 10, min_sequence_len=l_star_model_size + 10,max_sequence_len=l_star_model_size + 10, verbose=verbose)
 
         if verbose:
             print('-' * 5 + f' data gen: {rpni_model_minimized_char_set_str} ' + '-' * 5)
