@@ -24,7 +24,7 @@ test_cases_coverage = create_test_cases(bluetooth_models, num_tests, 'coverage')
 test_cases_random = create_test_cases(bluetooth_models, num_tests, 'random')
 
 repeats_per_experiment = 5
-verbose = False
+verbose = True
 
 for model_name, model in bluetooth_models:
     l_star_experiment_data = list()
@@ -90,7 +90,7 @@ for model_name, model in bluetooth_models:
             print('-' * 5 + f' data gen: {rpni_model_random_good_enough_str} ' + '-' * 5)
   
         
-        data_random_good_enough = generate_random_data(model, num_sequences= learning_queries * 21, min_sequence_len=l_star_model_size,max_sequence_len=l_star_model_size * 2, verbose=verbose)
+        data_random_good_enough = generate_random_data(model, num_sequences= learning_queries * 25, min_sequence_len=l_star_model_size,max_sequence_len=10 + l_star_model_size, verbose=verbose)
 
 
         if verbose:
