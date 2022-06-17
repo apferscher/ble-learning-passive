@@ -1,15 +1,12 @@
 import random
 
-from math import ceil
-
 from aalpy.SULs import MealySUL
 from aalpy.base.SUL import CacheSUL
 from aalpy.learning_algs import run_Lstar
-from aalpy.oracles import RandomWordEqOracle
 from aalpy.utils.HelperFunctions import all_prefixes
 
 
-def data_from_l_star_E_set(hypothesis, e_set, include_extended_s_set=True, prefix_closed=True,verbose = False):
+def data_from_l_star_E_set(hypothesis, e_set, include_extended_s_set=True, prefix_closed=True, verbose=False):
     observation_table_data = []
     prefixes = [state.prefix for state in hypothesis.states]
 
@@ -38,7 +35,7 @@ def data_from_l_star_E_set(hypothesis, e_set, include_extended_s_set=True, prefi
 
     if verbose:
         print(f'Number of samples provided to RPNI: {len(data_set_tmp)}')
-        print(f'Average length of samples provided to RPNI: {average_length}')
+        print(f'Average length of samples provided to RPNI: {round(average_length, 2)}')
 
     for seq in list(data_set):
         output = hypothesis.compute_output_seq(hypothesis.initial_state, seq)[-1]
@@ -47,9 +44,9 @@ def data_from_l_star_E_set(hypothesis, e_set, include_extended_s_set=True, prefi
     return observation_table_data
 
 
-def data_from_computed_e_set(hypothesis, include_extended_s_set=True, prefix_closed=True, verbose = False):
-
-    return data_from_l_star_E_set(hypothesis, hypothesis.compute_characterization_set(), include_extended_s_set, prefix_closed, verbose)
+def data_from_computed_e_set(hypothesis, include_extended_s_set=True, prefix_closed=True, verbose=False):
+    return data_from_l_star_E_set(hypothesis, hypothesis.compute_characterization_set(), include_extended_s_set,
+                                  prefix_closed, verbose)
 
 
 def minimized_char_set_data(hypothesis, include_extended_s_set=True, prefix_closed=True, verbose=False):
@@ -64,7 +61,7 @@ def minimized_char_set_data(hypothesis, include_extended_s_set=True, prefix_clos
 
     if verbose:
         print(f'Number of samples provided to RPNI: {len(input_sequences)}')
-        print(f'Average length of samples provided to RPNI: {average_length}')
+        print(f'Average length of samples provided to RPNI: {round(average_length, 2)}')
 
     if prefix_closed:
         prefix_closed_seq = set()
@@ -80,7 +77,7 @@ def minimized_char_set_data(hypothesis, include_extended_s_set=True, prefix_clos
     return pruned_data
 
 
-def generate_random_data(model, num_sequences, min_sequence_len, max_sequence_len, verbose = False, prefix_closed=True):
+def generate_random_data(model, num_sequences, min_sequence_len, max_sequence_len, verbose=False, prefix_closed=True):
     data = []
     input_alphabet = model.get_input_alphabet()
     random_sequences = [random.choices(input_alphabet, k=random.randint(min_sequence_len, max_sequence_len))
@@ -91,7 +88,7 @@ def generate_random_data(model, num_sequences, min_sequence_len, max_sequence_le
 
     if verbose:
         print(f'Number of samples provided to RPNI: {len(random_sequences)}')
-        print(f'Average length of samples provided to RPNI: {average_length}')
+        print(f'Average length of samples provided to RPNI: {round(average_length, 2)}')
 
     if prefix_closed:
         prefix_closed_seq = set()

@@ -1,7 +1,6 @@
 from collections import defaultdict
-from math import ceil
 from os import listdir
-from statistics import mean, mode
+from statistics import mean
 
 from aalpy.learning_algs import run_RPNI
 from aalpy.utils import load_automaton_from_file, compare_automata
@@ -11,8 +10,8 @@ from model_comparison import *
 
 bluetooth_models = []
 
-#model = load_automaton_from_file(f'./automata/CYW43455.dot', #automaton_type='mealy')
-#model_name = 'CYW43455'
+#model = load_automaton_from_file(f'./automata/CC2650.dot', automaton_type='mealy')
+#model_name = 'CC2650'
 #bluetooth_models.append((model_name, model))
 
 for dot_file in listdir('./automata'):
@@ -25,7 +24,7 @@ test_cases_coverage = create_test_cases(bluetooth_models, num_tests, 'coverage')
 test_cases_random = create_test_cases(bluetooth_models, num_tests, 'random')
 
 repeats_per_experiment = 5
-verbose = True
+verbose = False
 
 for model_name, model in bluetooth_models:
     l_star_experiment_data = list()
@@ -35,7 +34,7 @@ for model_name, model in bluetooth_models:
         # L*
         sul = MealySUL(model)
         alphabet = model.get_input_alphabet()
-        #eq_oracle = RandomWordEqOracle(alphabet, sul, num_walks=100, min_walk_len=4, max_walk_len=8)
+        # eq_oracle = RandomWordEqOracle(alphabet, sul, num_walks=100, min_walk_len=4, max_walk_len=8)
         eq_oracle = StatePrefixEqOracle(alphabet, sul, walks_per_state=10, walk_len=10)
 
         l_star_model, data = run_Lstar(alphabet, sul, eq_oracle, 'mealy', print_level=0, return_data=True)
@@ -63,17 +62,17 @@ for model_name, model in bluetooth_models:
         rpni_model_random_long_traces_str = "rpni_model_random_long_traces"
         rpni_model_minimized_char_set_str = "rpni_model_minimized_char_set"
         rpni_model_random_good_enough_str = "rpni_model_random_good_enough"
-        
+
         if verbose:
             print('-' * 5 + f' data gen: {rpni_model_l_star_str} ' + '-' * 5)
 
-        data_l_star = data_from_computed_e_set(l_star_model, include_extended_s_set=True, verbose = verbose)
+        data_l_star = data_from_computed_e_set(l_star_model, include_extended_s_set=True, verbose=verbose)
         # average length, runtime, length longest trace
 
         if verbose:
             print('-' * 5 + f' data gen: {rpni_model_random_l_star_length_str} ' + '-' * 5)
-        data_random_l_star_length = generate_random_data(model, num_sequences=learning_queries, min_sequence_len=1, max_sequence_len=max_sequence_length, verbose=verbose)
-
+        data_random_l_star_length = generate_random_data(model, num_sequences=learning_queries, min_sequence_len=1,
+                                                         max_sequence_len=max_sequence_length, verbose=verbose)
 
         if verbose:
             print('-' * 5 + f' data gen: {rpni_model_random_large_set_str} ' + '-' * 5)
@@ -84,15 +83,15 @@ for model_name, model in bluetooth_models:
             print('-' * 5 + f' data gen: {rpni_model_random_long_traces_str} ' + '-' * 5)
         data_random_long_traces = generate_random_data(model, num_sequences=learning_queries,
                                                        min_sequence_len=l_star_model.size,
-                                                       max_sequence_len=(l_star_model.size * 
-                                                       2), verbose=verbose)
+                                                       max_sequence_len=(l_star_model.size *
+                                                                         2), verbose=verbose)
 
-        
         if verbose:
             print('-' * 5 + f' data gen: {rpni_model_random_good_enough_str} ' + '-' * 5)
-           
+  
         
-        data_random_good_enough = generate_random_data(model, num_sequences= learning_queries * 10, min_sequence_len=l_star_model_size + 10,max_sequence_len=l_star_model_size + 10, verbose=verbose)
+        data_random_good_enough = generate_random_data(model, num_sequences= learning_queries * 21, min_sequence_len=l_star_model_size,max_sequence_len=l_star_model_size * 2, verbose=verbose)
+
 
         if verbose:
             print('-' * 5 + f' data gen: {rpni_model_minimized_char_set_str} ' + '-' * 5)
@@ -109,7 +108,7 @@ for model_name, model in bluetooth_models:
 
         # L* with caching
         queries_to_fill_holes, cache_hits = l_star_with_populated_cache(model, data_random_l_star_length, eq_oracle)
-        l_star_experiment_data.append((l_star_model.size,learning_queries, queries_to_fill_holes, cache_hits))
+        l_star_experiment_data.append((l_star_model.size, learning_queries, queries_to_fill_holes, cache_hits))
 
         if verbose:
             print(f'L* with caching initialed with random data of size {learning_queries}: '
@@ -140,7 +139,6 @@ for model_name, model in bluetooth_models:
 
             coverage_diff, random_diff = 0, 0
             if cex:
-                # model_diff = compare_learned_models(l_star_model, rpni_model, num_tests=10000)
                 coverage_diff = compare_learned_models(l_star_model, rpni_model, test_cases_coverage[model_name])
                 random_diff = compare_learned_models(l_star_model, rpni_model, test_cases_random[model_name])
                 if verbose:
@@ -169,8 +167,10 @@ for model_name, model in bluetooth_models:
     for experiment, data in rpni_experiment_data.items():
         print(f'{experiment} data summary')
         print(f'RPNI Model sizes {[i[0] for i in data]}')
-        print(f'Coverage testing conformance: {round(100 - mean([i[1] for i in data]) * 100, 2)}%')
-        print(f'Random   testing conformance: {round(100 - mean([i[2] for i in data]) * 100, 2)}%')
+        print(f'Coverage testing conformance %: {[round(100 - i[1] * 100, 2) for i in data]} '
+              f'Avg:{round(100 - mean([i[1] for i in data]) * 100, 2)}%')
+        print(f'Random   testing conformance %: {[round(100 - i[2] * 100, 2) for i in data]} '
+              f'Avg:{round(100 - mean([i[2] for i in data]) * 100, 2)}%')
 
     if verbose:
         print('----------------------------------------------------------------')
