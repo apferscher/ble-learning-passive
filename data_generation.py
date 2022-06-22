@@ -1,9 +1,22 @@
 import random
+from tokenize import Double
 
 from aalpy.SULs import MealySUL
 from aalpy.base.SUL import CacheSUL
 from aalpy.learning_algs import run_Lstar
 from aalpy.utils.HelperFunctions import all_prefixes
+from boto import NullHandler
+
+
+class DataSet:
+
+    def __init__(self, data, size, steps) -> None:
+        self.data = data
+        self.size = size
+        self.steps = steps
+
+    def average_len(self) -> Double:
+        return self.steps / self.size
 
 
 def data_from_l_star_E_set(hypothesis, e_set, include_extended_s_set=True, prefix_closed=True, verbose=False):
@@ -31,17 +44,17 @@ def data_from_l_star_E_set(hypothesis, e_set, include_extended_s_set=True, prefi
                 data_set.add(cell)
 
     sequence_step_sum = sum([len(i) for i in data_set_tmp])
-    average_length = sequence_step_sum / len(data_set_tmp)
+    data_set_size = len(data_set_tmp)
 
     if verbose:
         print(f'Number of samples provided to RPNI: {len(data_set_tmp)}')
-        print(f'Average length of samples provided to RPNI: {round(average_length, 2)}')
+        print(f'Average length of samples provided to RPNI: {round(sequence_step_sum/data_set_size, 2)}')
 
     for seq in list(data_set):
         output = hypothesis.compute_output_seq(hypothesis.initial_state, seq)[-1]
         observation_table_data.append((seq, output))
 
-    return observation_table_data
+    return DataSet(observation_table_data, data_set_size, sequence_step_sum)
 
 
 def data_from_computed_e_set(hypothesis, include_extended_s_set=True, prefix_closed=True, verbose=False):
@@ -53,14 +66,17 @@ def minimized_char_set_data(hypothesis, include_extended_s_set=True, prefix_clos
     from aalpy.learning_algs.deterministic_passive.rpni_helper_functions import extract_unique_sequences, createPTA
     data = data_from_computed_e_set(hypothesis, include_extended_s_set, prefix_closed)
     input_sequences = []
-    for seq in extract_unique_sequences(createPTA(data, automaton_type='mealy')):
+    for seq in extract_unique_sequences(createPTA(data.data, automaton_type='mealy')):
         input_sequences.append([io[0][0] for io in seq])
 
     sequence_step_sum = sum([len(i) for i in input_sequences])
     average_length = sequence_step_sum / len(input_sequences)
 
+    data_set_size = len(input_sequences)
+    data_set_steps = sequence_step_sum
+
     if verbose:
-        print(f'Number of samples provided to RPNI: {len(input_sequences)}')
+        print(f'Number of samples provided to RPNI: {data_set_size}')
         print(f'Average length of samples provided to RPNI: {round(average_length, 2)}')
 
     if prefix_closed:
@@ -74,7 +90,7 @@ def minimized_char_set_data(hypothesis, include_extended_s_set=True, prefix_clos
         output = hypothesis.compute_output_seq(hypothesis.initial_state, seq)[-1]
         pruned_data.append((seq, output))
 
-    return pruned_data
+    return DataSet(pruned_data, data_set_size, data_set_steps)
 
 
 def generate_random_data(model, num_sequences, min_sequence_len, max_sequence_len, verbose=False, prefix_closed=True):
@@ -84,11 +100,11 @@ def generate_random_data(model, num_sequences, min_sequence_len, max_sequence_le
                         for _ in range(num_sequences)]
 
     sequence_step_sum = sum([len(i) for i in random_sequences])
-    average_length = sequence_step_sum / num_sequences
+    data_length = len(random_sequences)
 
     if verbose:
         print(f'Number of samples provided to RPNI: {len(random_sequences)}')
-        print(f'Average length of samples provided to RPNI: {round(average_length, 2)}')
+        print(f'Average length of samples provided to RPNI: {round(sequence_step_sum/data_length, 2)}')
 
     if prefix_closed:
         prefix_closed_seq = set()
@@ -100,7 +116,7 @@ def generate_random_data(model, num_sequences, min_sequence_len, max_sequence_le
         output = model.compute_output_seq(model.initial_state, seq)[-1]
         data.append((seq, output))
 
-    return data
+    return DataSet(data, data_length, sequence_step_sum)
 
 
 def l_star_with_populated_cache(model, cache_data, eq_oracle):
