@@ -113,7 +113,7 @@ for model_name, model in bluetooth_models:
             print('-' * 5 + f' data gen: {rpni_model_random_good_enough_str} ' + '-' * 5)
   
         
-        data_random_good_enough = generate_random_data(model, num_sequences= learning_queries * 25, min_sequence_len=l_star_model_size,max_sequence_len=10 + l_star_model_size, verbose=verbose)
+        data_random_good_enough = generate_random_data(model, num_sequences= learning_queries * 6, min_sequence_len=l_star_model_size,max_sequence_len=10 + l_star_model_size, verbose=verbose)
 
 
         if verbose:
