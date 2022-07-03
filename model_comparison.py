@@ -53,8 +53,6 @@ def compare_mealy_and_moore_learning():
     model_moore = run_RPNI(data, automaton_type='moore', input_completeness='sink_state')
 
     tc_random = create_test_cases([('ex1', model)], 10000, 'random')['ex1']
-    # tc_coverage = create_test_cases([('ex1', model)], 10000, 'coverage')
-
     res_random1 = compare_learned_models(model, model_mealy, tc_random)
     res_random2 = compare_learned_models(model, model_moore, tc_random)
 
@@ -97,36 +95,3 @@ def increasing_parameters_exp(target_model, step_increase=2, query_increase=1, n
     return experiment_data
 
 
-def increasing_parameters_exp_fixed(target_model, num_increases=10):
-     # if you want to examine effect of increasing steps without increasing the number of queries simply put
-    # query_increase to 0, and vice versa if you want to have steps fixed
-    # Returns: a list of tuples (num_queries, query_len, rpni_model_acc)
-
-    sul = MealySUL(target_model)
-    alphabet = target_model.get_input_alphabet()
-    eq_oracle = RandomWordEqOracle(alphabet, sul, num_walks=100, min_walk_len=4, max_walk_len=8)
-
-    l_star_model, data = run_Lstar(alphabet, sul, eq_oracle, 'mealy', print_level=0, return_data=True)
-
-    learning_queries = data['queries_learning'] + data['queries_eq_oracle']
-    avg_query_steps = int((data['steps_learning'] + data['steps_eq_oracle']) / learning_queries)
-
-    tc = create_test_cases([('ex1', target_model)], 10000, 'coverage')['ex1']
-
-    experiment_data = []
-    curr_queries = learning_queries
-    for _ in range(num_increases):
-       
-
-        random_data = generate_random_data(target_model, num_sequences=learning_queries,
-                                           min_sequence_len=l_star_model.size, max_sequence_len=l_star_model.size + 10)
-
-        rpni_model = run_RPNI(random_data.data, 'mealy', print_info=True, input_completeness='sink_state')
-
-        non_conformance = compare_learned_models(l_star_model, rpni_model, tc)
-        conformance = round((1 - non_conformance) * 100, 2)
-
-        experiment_data.append((curr_queries, random_data.average_len(), conformance))
-        curr_queries += learning_queries
-
-    return experiment_data

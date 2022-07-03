@@ -1,1 +1,1 @@
-aalpy
+aalpy>=1.2.7

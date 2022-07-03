@@ -18,14 +18,11 @@ class Experiment:
 
 bluetooth_models = []
 
-#model = load_automaton_from_file(f'./automata/CC2650.dot', automaton_type='mealy')
-#model_name = 'CC2650'
-#bluetooth_models.append((model_name, model))
-
 for dot_file in listdir('./automata'):
-    model_name = dot_file[:-4]
-    model = load_automaton_from_file(f'./automata/{dot_file}', automaton_type='mealy')
-    bluetooth_models.append((model_name, model))
+    if dot_file[-4:] == ".dot":
+        model_name = dot_file[:-4]
+        model = load_automaton_from_file(f'./automata/{dot_file}', automaton_type='mealy')
+        bluetooth_models.append((model_name, model))
 
 num_tests = 10000
 test_cases_coverage = create_test_cases(bluetooth_models, num_tests, 'coverage')
@@ -41,7 +38,6 @@ for model_name, model in bluetooth_models:
     # L*
     sul = MealySUL(model)
     alphabet = model.get_input_alphabet()
-    # eq_oracle = RandomWordEqOracle(alphabet, sul, num_walks=100, min_walk_len=4, max_walk_len=8)
     eq_oracle = StatePrefixEqOracle(alphabet, sul, walks_per_state=10, walk_len=10)
 
     l_star_model, data = run_Lstar(alphabet, sul, eq_oracle, 'mealy', print_level=0, return_data=True)
@@ -78,12 +74,12 @@ for model_name, model in bluetooth_models:
     # long sequence  
     max_sequence_length = round((avg_query_steps - 0.5) * 2)
 
-    rpni_model_l_star_str = "rpni_model_l_star"
-    rpni_model_random_l_star_length_str = "rpni_model_random_l_star_length"
-    rpni_model_random_large_set_str = "rpni_model_random_large_set"
-    rpni_model_random_long_traces_str = "rpni_model_random_long_traces"
-    rpni_model_minimized_char_set_str = "rpni_model_minimized_char_set"
-    rpni_model_random_good_enough_str = "rpni_model_random_good_enough"
+    rpni_model_l_star_str = "l* data"
+    rpni_model_random_l_star_length_str = "random |l* data|"
+    rpni_model_random_large_set_str = "random 2*|l* data|"
+    rpni_model_random_long_traces_str = "random long traces"
+    rpni_model_minimized_char_set_str = "l* data (minimized)"
+    rpni_model_random_good_enough_str = "random corr"
 
     for _ in range(repeats_per_experiment):
 
@@ -94,27 +90,20 @@ for model_name, model in bluetooth_models:
 
         if verbose:
             print('-' * 5 + f' data gen: {rpni_model_random_l_star_length_str} ' + '-' * 5)
-        data_random_l_star_length = generate_random_data(model, num_sequences=learning_queries, min_sequence_len=1,
-                                                         max_sequence_len=max_sequence_length, verbose=verbose)
+        data_random_l_star_length = generate_random_data(model, num_sequences=learning_queries, min_sequence_len=1,max_sequence_len=max_sequence_length, verbose=verbose)
 
         if verbose:
             print('-' * 5 + f' data gen: {rpni_model_random_large_set_str} ' + '-' * 5)
-        data_random_large_set = generate_random_data(model, num_sequences=(learning_queries * 2), min_sequence_len=1,
-                                                     max_sequence_len=max_sequence_length, verbose=verbose)
+        data_random_large_set = generate_random_data(model, num_sequences=(learning_queries * 2), min_sequence_len=1,max_sequence_len=max_sequence_length, verbose=verbose)
 
         if verbose:
             print('-' * 5 + f' data gen: {rpni_model_random_long_traces_str} ' + '-' * 5)
-        data_random_long_traces = generate_random_data(model, num_sequences=learning_queries,
-                                                       min_sequence_len=l_star_model.size,
-                                                       max_sequence_len=(l_star_model.size *
-                                                                         2), verbose=verbose)
+        data_random_long_traces = generate_random_data(model, num_sequences=learning_queries, min_sequence_len=l_star_model.size,max_sequence_len=(l_star_model.size * 2), verbose=verbose)
 
         if verbose:
             print('-' * 5 + f' data gen: {rpni_model_random_good_enough_str} ' + '-' * 5)
   
-        
         data_random_good_enough = generate_random_data(model, num_sequences= learning_queries * 7, min_sequence_len=l_star_model_size,max_sequence_len=10 + l_star_model_size, verbose=verbose)
-
 
         if verbose:
             print('-' * 5 + f' data gen: {rpni_model_minimized_char_set_str} ' + '-' * 5)
@@ -150,24 +139,18 @@ for model_name, model in bluetooth_models:
 
             if verbose:
                 print(f'RPNI Learned {rpni_model.size} state model.')
-                # wrong size
-                # print(f'Number of samples provided to RPNI: {len(data)}')
 
             if set(rpni_model.get_input_alphabet()) != set(l_star_model.get_input_alphabet()):
                 if verbose:
                     print('Learned models do not have the same input alphabets => RPNI model is not input complete.')
                 continue
 
-            cex = compare_automata(rpni_model, l_star_model)
-
-            coverage_diff, random_diff = 0, 0
-            if cex:
-                coverage_diff = compare_learned_models(l_star_model, rpni_model, test_cases_coverage[model_name])
-                random_diff = compare_learned_models(l_star_model, rpni_model, test_cases_random[model_name])
-                if verbose:
-                    print('Counterexample found between models learned by RPNI and L*.')
-                    print(f'Coverage test cases: {round(coverage_diff * 100, 2)}% non-conforming test-cases.')
-                    print(f'Random test cases  : {round(random_diff * 100, 2)}% non-conforming test-cases.')
+            coverage_diff = compare_learned_models(l_star_model, rpni_model, test_cases_coverage[model_name])
+            random_diff = compare_learned_models(l_star_model, rpni_model, test_cases_random[model_name])
+            if (coverage_diff > 0 or random_diff > 0) and verbose:
+                print('Counterexample found between models learned by RPNI and L*.')
+                print(f'Coverage test cases: {round(coverage_diff * 100, 2)}% non-conforming test-cases.')
+                print(f'Random test cases  : {round(random_diff * 100, 2)}% non-conforming test-cases.')
             else:
                 if verbose:
                     print('RPNI and L* learned same models.')
@@ -184,7 +167,6 @@ for model_name, model in bluetooth_models:
     if len(set([i[0] for i in l_star_experiment_data])) != 1:
         print(f"L* did not always learn model of the same size: {[i[0] for i in l_star_experiment_data]}")
 
-    #print(f"L* model size: {l_star_experiment_data[0][0]}")
 
     print(f'L* with caching initialed with random data of size equal to data required for L*.\n'
           f'  # random samples: {[i[1] for i in l_star_experiment_data]}\n'

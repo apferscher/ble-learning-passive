@@ -5,7 +5,6 @@ from aalpy.SULs import MealySUL
 from aalpy.base.SUL import CacheSUL
 from aalpy.learning_algs import run_Lstar
 from aalpy.utils.HelperFunctions import all_prefixes
-from boto import NullHandler
 
 
 class DataSet:
