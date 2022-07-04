@@ -15,7 +15,7 @@ This repository contains the supplemental material to the paper ' Active or Pass
 
 ## Prerequisites
 
-Python library  [Aalpy >=1.2.7](https://github.com/DES-Lab/AALpy)
+Python library  [Aalpy >=1.2.8](https://github.com/DES-Lab/AALpy)
 
 **Requirements installation:** 
 
