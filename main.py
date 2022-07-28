@@ -18,17 +18,19 @@ class Experiment:
 
 bluetooth_models = []
 
-for dot_file in listdir('./automata'):
+benchmark = 'BLE'
+
+for dot_file in listdir(f'./automata/{benchmark}'):
     if dot_file[-4:] == ".dot":
         model_name = dot_file[:-4]
-        model = load_automaton_from_file(f'./automata/{dot_file}', automaton_type='mealy')
+        model = load_automaton_from_file(f'./automata/{benchmark}/{dot_file}', automaton_type='mealy')
         bluetooth_models.append((model_name, model))
 
 num_tests = 10000
 test_cases_coverage = create_test_cases(bluetooth_models, num_tests, 'coverage')
 test_cases_random = create_test_cases(bluetooth_models, num_tests, 'random')
 
-repeats_per_experiment = 5
+repeats_per_experiment = 1 # 5
 verbose = False
 
 for model_name, model in bluetooth_models:
@@ -103,7 +105,7 @@ for model_name, model in bluetooth_models:
         if verbose:
             print('-' * 5 + f' data gen: {rpni_model_random_good_enough_str} ' + '-' * 5)
   
-        data_random_good_enough = generate_random_data(model, num_sequences= learning_queries * 7, min_sequence_len=l_star_model_size,max_sequence_len=10 + l_star_model_size, verbose=verbose)
+        data_random_good_enough = generate_random_data(model, num_sequences= learning_queries * 1, min_sequence_len=l_star_model_size,max_sequence_len=10 + l_star_model_size, verbose=verbose) # 7 for ble
 
         if verbose:
             print('-' * 5 + f' data gen: {rpni_model_minimized_char_set_str} ' + '-' * 5)
