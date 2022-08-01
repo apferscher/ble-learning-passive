@@ -4,6 +4,7 @@ from aalpy.SULs import MealySUL
 from aalpy.learning_algs import run_Lstar, run_RPNI
 from aalpy.oracles import StatePrefixEqOracle, RandomWordEqOracle
 from aalpy.utils import generate_test_cases
+from aalpy.automata import MealyMachine
 
 from data_generation import generate_random_data
 
@@ -16,6 +17,9 @@ def compare_learned_models(model_1, model_2, test_cases):
         o_2 = model_2.compute_output_seq(model_2.initial_state, test_case)
 
         if o_1 != o_2:
+            #print(test_case)
+            #print(o_1)
+            #print(o_2)
             diff += 1
 
     return diff / len(test_cases)
@@ -93,5 +97,10 @@ def increasing_parameters_exp(target_model, step_increase=2, query_increase=1, n
         experiment_data.append((curr_queries, curr_steps, conformance))
 
     return experiment_data
+
+def compute_shortest_prefixes(model: MealyMachine):
+    for state in model.states:
+        state.prefix = model.get_shortest_path(model.initial_state, state)
+    return model
 
 
