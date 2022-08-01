@@ -141,4 +141,4 @@ def l_star_with_populated_cache(model, cache_data, eq_oracle):
     cache_hits = sul.num_cached_queries
     queries_posed = data['queries_learning'] + data['queries_eq_oracle'] - cache_hits
 
-    return queries_posed, cache_hits
+    return l_star_model, queries_posed, cache_hits, data['learning_rounds']
