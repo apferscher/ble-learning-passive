@@ -7,9 +7,11 @@ import string
 
 from aalpy.learning_algs import run_RPNI
 from aalpy.utils import load_automaton_from_file, compare_automata
+from numpy import number
 
 from data_generation import *
 from model_comparison import *
+from csv_export import *
 
 class LStarExperiment:
     def __init__(self, model_size, output_queries, steps_output_queries, eq_oracle_queries, steps_eq_queries, learning_rounds, conformance_coverage, conformance_random) -> None:
@@ -106,7 +108,9 @@ def l_star_summary(l_star_experiment_data, verbose):
     steps_eq_queries = data_stats("steps_eq_queries", l_star_experiment_data)
     average_trace_len = data_stats("average_trace_len", l_star_experiment_data)
     conformance_coverage = data_stats("conformance_coverage", l_star_experiment_data)
-    conformance_random = data_stats("conformance_random", l_star_experiment_data)   
+    conformance_random = data_stats("conformance_random", l_star_experiment_data) 
+    sum_queries = data_stats("sum_queries", l_star_experiment_data) 
+    sum_steps = data_stats("sum_steps", l_star_experiment_data) 
 
     if verbose:
         print(f'\nL* summary:')
@@ -120,32 +124,46 @@ def l_star_summary(l_star_experiment_data, verbose):
         print(f'Conformance (coverage): {conformance_coverage[0]} ({conformance_coverage[1]})')
         print(f'Conformance (random): {conformance_random[0]} ({conformance_random[1]})')
 
+    return LStarExportEntry(number_states, output_queries, steps_output_queries, eq_oracle_queries, steps_eq_queries, conformance_coverage, learning_rounds, sum_queries, sum_steps, average_trace_len)
+
 
 def rpni_summary(rpni_experiment_data, rpni_data_names, minimized_l_star, verbose):
+
+    rpni_export_data = defaultdict(RPNIExportEntry)
 
     minimized_l_star_data = rpni_experiment_data[minimized_l_star][0]
 
     if verbose:
         print(f'\nRPNI summary:')
         print(f'States: {minimized_l_star_data.model_size}')
+        print(f'Sample size: {minimized_l_star_data.data_size}')
         print(f'Average trace length: {minimized_l_star_data.average_len}')
         print(f'Conformance (coverage): {minimized_l_star_data.conformance_coverage}')
         print(f'Conformance (random): {minimized_l_star_data.conformance_random}')
+    
+    rpni_export_data[minimized_l_star] = RPNIExportEntry((minimized_l_star_data.model_size,0), (minimized_l_star_data.conformance_coverage,0), (minimized_l_star_data.conformance_random, 0), (minimized_l_star_data.data_size, 0) , (minimized_l_star_data.average_len, 0), ("",0))
+
 
     for experiment_name in rpni_data_names:
         number_states = data_stats("model_size", rpni_experiment_data[experiment_name])
+        data_size = data_stats("data_size", rpni_experiment_data[experiment_name])
         average_len = data_stats("average_len", rpni_experiment_data[experiment_name])
         conformance_coverage = data_stats("conformance_coverage", rpni_experiment_data[experiment_name])
         conformance_random = data_stats("conformance_random", rpni_experiment_data[experiment_name])
-        correctly_learned_models = [getattr(elem, "correctly_learned_model") for elem in rpni_experiment_data[experiment_name] if getattr(elem, "correctly_learned_model")==True]
+        correctly_learned_model = [getattr(elem, "correctly_learned_model") for elem in rpni_experiment_data[experiment_name] if getattr(elem, "correctly_learned_model")==True]
+
+        rpni_export_data[experiment_name] = RPNIExportEntry(number_states, conformance_coverage, conformance_random, data_size, average_len, (len(correctly_learned_model),0))
     
         if verbose:
             print(f'\nExperiment: {experiment_name}')
             print(f'States: {number_states[0]} ({number_states[1]})')
+            print(f'Sample size: {data_size[0]} ({data_size[1]})')
             print(f'Average trace length: {average_len[0]} ({average_len[1]})')
             print(f'Conformance (coverage): {conformance_coverage[0]} ({conformance_coverage[1]})')
             print(f'Conformance (random): {conformance_random[0]} ({conformance_random[1]})')
-            print(f'Correctly learned models: {len(correctly_learned_models)}/{len(rpni_experiment_data[experiment_name])}')
+            print(f'Correctly learned models: {len(correctly_learned_model)}/{len(rpni_experiment_data[experiment_name])}')
+
+        return rpni_export_data
 
 
 
@@ -163,8 +181,9 @@ def cached_l_star_summary(cached_l_star_experiment_data, verbose):
         print(f'Random sample size: {random_sample_size[0]} ({random_sample_size[1]})')
         print(f'Performed queries: {performed_queries[0]} ({performed_queries[1]})')
         print(f'Cached Queries: {cache_hits[0]} ({cache_hits[1]})')
-
         print(f'Learning Rounds: {learning_rounds[0]} ({learning_rounds[1]})')
+
+    return CachedLStarExportEntry(conformance_coverage, random_sample_size, performed_queries, cache_hits, learning_rounds)
 
 
 if __name__ == "__main__":
@@ -189,6 +208,27 @@ if __name__ == "__main__":
 
     # export csv files that contain the results of the performed evaluation
     csv = True
+    l_star_data_export = DataExporter(LStarExportEntry.pretty_printed_attr())
+    rpni_data_export = RPNIDataExporter(RPNIExportEntry.pretty_printed_attr())
+    cached_l_star_data_export = DataExporter(CachedLStarExportEntry.pretty_printed_attr())
+
+    #rpni_model_l_star_str = "l* data"
+    rpni_model_random_l_star_length_str = "random |l* data|"
+    rpni_model_random_large_set_str = "random 2*|l* data|"
+    rpni_model_random_long_traces_str = "random long traces"
+    rpni_model_minimized_char_set_str = "l* data (minimized)"
+    #rpni_model_random_good_enough_str = "random corr"
+
+    rpni_data = {
+            #rpni_model_l_star_str: data_l_star,
+            rpni_model_random_l_star_length_str: None,
+            #rpni_model_random_large_set_str: None,
+            #rpni_model_random_long_traces_str: None,
+            #rpni_model_minimized_char_set_str: data_minimized_char_set,
+            #rpni_model_random_good_enough_str: data_random_good_enough
+    }
+
+    rpni_data_names = rpni_data.keys()
     
     for model_name, model in benchmark_models:
 
@@ -197,13 +237,14 @@ if __name__ == "__main__":
         cached_l_star_experiment_data = defaultdict(list)
 
         # parameter for equivalence oracle
-        walks_per_state=30
-        walk_len=30
+        walks_per_state=25
+        walk_len=25
 
         sul = MealySUL(model)
         alphabet = model.get_input_alphabet()
-        
 
+        rpni_data_export.add_model(model_name)
+        
         for _ in range(repeats_per_experiment):
             eq_oracle = StatePrefixEqOracle(alphabet, sul, walks_per_state=walks_per_state, walk_len=walk_len)
             l_star_res = l_star_experiment(model, test_cases_coverage[model_name], test_cases_random[model_name], alphabet, eq_oracle)
@@ -213,13 +254,6 @@ if __name__ == "__main__":
         max_sequence_length = round((avg_query_steps - 0.5) * 2)
 
         learning_queries = round(data_stats("sum_queries", l_star_experiment_data[model_name])[0])
-
-        #rpni_model_l_star_str = "l* data"
-        rpni_model_random_l_star_length_str = "random |l* data|"
-        rpni_model_random_large_set_str = "random 2*|l* data|"
-        rpni_model_random_long_traces_str = "random long traces"
-        rpni_model_minimized_char_set_str = "l* data (minimized)"
-        #rpni_model_random_good_enough_str = "random corr"
 
         data_l_star= data_from_computed_e_set(model,include_extended_s_set=True, verbose=verbose_level == 2)
 
@@ -247,13 +281,13 @@ if __name__ == "__main__":
             rpni_data = {
             #rpni_model_l_star_str: data_l_star,
             rpni_model_random_l_star_length_str: data_random_l_star_length,
-            rpni_model_random_large_set_str: data_random_large_set,
-            rpni_model_random_long_traces_str: data_random_long_traces,
+            #rpni_model_random_large_set_str: data_random_large_set,
+            #rpni_model_random_long_traces_str: data_random_long_traces,
             #rpni_model_minimized_char_set_str: data_minimized_char_set,
             #rpni_model_random_good_enough_str: data_random_good_enough
             }
+
            
-            rpni_data_names = rpni_data.keys()
             
             for data_name, data in rpni_data.items():
                 rpni_experiment_data[model_name][data_name].append(rpni_experiment(data,model,test_cases_coverage[model_name], test_cases_random[model_name]))
@@ -264,178 +298,19 @@ if __name__ == "__main__":
             cached_l_star_experiment_data[model_name].append(cached_l_star_experiment)
 
         
-            
-        minimized_l_star = "minimized_l_star"
 
-        rpni_experiment_data[model_name][minimized_l_star].append(rpni_experiment(data_minimized_char_set,model,test_cases_coverage[model_name], test_cases_random[model_name]))
+        rpni_experiment_data[model_name][rpni_model_minimized_char_set_str].append(rpni_experiment(data_minimized_char_set,model,test_cases_coverage[model_name], test_cases_random[model_name]))
         
 
         print(f'------------------{model_name}------------------')
-        l_star_summary(l_star_experiment_data[model_name], verbose = verbose_level >= 1)
-        rpni_summary(rpni_experiment_data[model_name],rpni_data_names,minimized_l_star, verbose = verbose_level >= 1)
-        cached_l_star_summary(cached_l_star_experiment_data[model_name], verbose = verbose_level >= 1)
-        
-        
-"""
+        l_star_data_export.add_entry(model_name, l_star_summary(l_star_experiment_data[model_name], verbose = verbose_level >= 1))
 
-for model_name, model in benchmark_models:
-    l_star_experiment_data = list()
-    rpni_experiment_data = defaultdict(list)
+        rpni_data_export.add_entry(model_name, rpni_summary(rpni_experiment_data[model_name],rpni_data_names,rpni_model_minimized_char_set_str, verbose = verbose_level >= 1))
 
-    # L*
-    sul = MealySUL(model)
-    alphabet = model.get_input_alphabet()
-    eq_oracle = StatePrefixEqOracle(alphabet, sul, walks_per_state=50, walk_len=50)
-
-    l_star_model, data = run_Lstar(alphabet, sul, eq_oracle, 'mealy', print_level=0, return_data=True)
-    l_star_model_size = l_star_model.size
-
-    # L* info
-    e_set = data['characterization set']
-    output_queries = data['queries_learning']
-    steps_output_queries = data['steps_learning']
-    eq_oracle_queries = data['queries_eq_oracle']
-    steps_eq_queries = data['steps_eq_oracle']
-    learning_rounds = data['learning_rounds']
-
-    learning_queries = (output_queries + eq_oracle_queries)
-
-    avg_query_steps = (data['steps_learning'] + data['steps_eq_oracle']) / learning_queries
-
-    print('-' * 70)
-    print(f'ACTIVE LEARNING DATA:')
-    print('-' * 70)
-
-    print(f'------------------{model_name}------------------')
-    print(f'Model size: {l_star_model_size}')
-    print(f'Output queries: {output_queries}')
-    print(f'Output queries steps: {steps_output_queries}')
-    print(f'Conformance queries: {eq_oracle_queries}')
-    print(f'Output query steps: {steps_eq_queries}')
-    print(f'Average query steps: {avg_query_steps}')
-    print(f'Learning rounds: {learning_rounds}')
-
-
-    if verbose:
-        print(f'L* data size: {learning_queries}')
-        print(f'Average length of L* samples: {avg_query_steps}')
-
-    # long sequence  
-    max_sequence_length = round((avg_query_steps - 0.5) * 2)
-
-    rpni_model_l_star_str = "l* data"
-    rpni_model_random_l_star_length_str = "random |l* data|"
-    rpni_model_random_large_set_str = "random 2*|l* data|"
-    rpni_model_random_long_traces_str = "random long traces"
-    rpni_model_minimized_char_set_str = "l* data (minimized)"
-    rpni_model_random_good_enough_str = "random corr"
-
-    for _ in range(repeats_per_experiment):
-
-        if verbose:
-            print('-' * 5 + f' data gen: {rpni_model_l_star_str} ' + '-' * 5)
-
-        l_star_model = compute_shortest_prefixes(l_star_model)
-
-        data_l_star= data_from_computed_e_set(l_star_model, 
-        include_extended_s_set=True, verbose=verbose)
-
-        if verbose:
-            print('-' * 5 + f' data gen: {rpni_model_random_l_star_length_str} ' + '-' * 5)
-        data_random_l_star_length = generate_random_data(model, num_sequences=learning_queries, min_sequence_len=1,max_sequence_len=max_sequence_length, verbose=verbose)
-
-        if verbose:
-            print('-' * 5 + f' data gen: {rpni_model_random_large_set_str} ' + '-' * 5)
-        data_random_large_set = generate_random_data(model, num_sequences=(learning_queries * 2), min_sequence_len=1,max_sequence_len=max_sequence_length, verbose=verbose)
-
-        if verbose:
-            print('-' * 5 + f' data gen: {rpni_model_random_long_traces_str} ' + '-' * 5)
-        data_random_long_traces = generate_random_data(model, num_sequences=learning_queries, min_sequence_len=l_star_model.size,max_sequence_len=(l_star_model.size * 2), verbose=verbose)
-
-        if verbose:
-            print('-' * 5 + f' data gen: {rpni_model_random_good_enough_str} ' + '-' * 5)
-  
-        data_random_good_enough = generate_random_data(model, num_sequences= learning_queries * 1, min_sequence_len=l_star_model_size,max_sequence_len=10 + l_star_model_size, verbose=verbose) # 7 for ble
-
-        if verbose:
-            print('-' * 5 + f' data gen: {rpni_model_minimized_char_set_str} ' + '-' * 5)
-        data_minimized_char_set = minimized_char_set_data(l_star_model, include_extended_s_set=True, verbose=verbose)
-
-        rpni_data = {
-            rpni_model_l_star_str: data_l_star,
-            #rpni_model_random_l_star_length_str: data_random_l_star_length,
-            #rpni_model_random_large_set_str: data_random_large_set,
-            #rpni_model_random_long_traces_str: data_random_long_traces,
-            #rpni_model_minimized_char_set_str: data_minimized_char_set,
-            #rpni_model_random_good_enough_str: data_random_good_enough
-        }
-
-        # L* with caching
-        queries_to_fill_holes, cache_hits = l_star_with_populated_cache(model, data_random_l_star_length.data, eq_oracle)
-        l_star_experiment_data.append((l_star_model.size, learning_queries, queries_to_fill_holes, cache_hits))
-
-        if verbose:
-            print(f'L* with caching initialed with random data of size {learning_queries}: '
-                  f'queries {queries_to_fill_holes}, cache hits {cache_hits}')
-
-        if verbose:
-            print(f'Experiment: {model_name}')
-            print(f'L* learned {l_star_model.size} state model.')
-            print(f'Number of queries required by L*  : {learning_queries}')
-
-        for data_name, data in rpni_data.items():
-            if verbose:
-                print('-' * 5 + f' {data_name} ' + '-' * 5)
-            rpni_model = run_RPNI(data.data, automaton_type='mealy', input_completeness='sink_state',
-                                  print_info=False)
-
-            if verbose:
-                print(f'RPNI Learned {rpni_model.size} state model.')
-
-            if set(rpni_model.get_input_alphabet()) != set(l_star_model.get_input_alphabet()):
-                if verbose:
-                    print('Learned models do not have the same input alphabets => RPNI model is not input complete.')
-                continue
-
-            coverage_diff = compare_learned_models(l_star_model, rpni_model, test_cases_coverage[model_name])
-            random_diff = compare_learned_models(l_star_model, rpni_model, test_cases_random[model_name])
-            if (coverage_diff > 0 or random_diff > 0) and verbose:
-                print('Counterexample found between models learned by RPNI and L*.')
-                print(f'Coverage test cases: {round(coverage_diff * 100, 2)}% non-conforming test-cases.')
-                print(f'Random test cases  : {round(random_diff * 100, 2)}% non-conforming test-cases.')
-            else:
-                if verbose:
-                    print('RPNI and L* learned same models.')
-                if rpni_model.size != l_star_model.size and verbose:
-                    print(f'    Models do have different size.\n    RPNI {rpni_model.size} vs. L* {l_star_model.size}')
-
-            rpni_experiment_data[data_name].append(Experiment(rpni_model.size, coverage_diff, random_diff, data.size, data.average_len()))
+        cached_l_star_data_export.add_entry(model_name, cached_l_star_summary(cached_l_star_experiment_data[model_name], verbose = verbose_level >= 1))
     
-    print('-' * 70)
-    print(f'PASSIVE LEARNING DATA:')
-    print('-' * 70)
-
-    print(f'------------------{model_name}------------------')
-    if len(set([i[0] for i in l_star_experiment_data])) != 1:
-        print(f"L* did not always learn model of the same size: {[i[0] for i in l_star_experiment_data]}")
-
-
-    print(f'L* with caching initialed with random data of size equal to data required for L*.\n'
-          f'  # random samples: {[i[1] for i in l_star_experiment_data]}\n'
-          f'  # queries       : {[i[2] for i in l_star_experiment_data]}\n'
-          f'  # cache hits    : {[i[3] for i in l_star_experiment_data]}')
-
-    for experiment, data in rpni_experiment_data.items():
-        print(f'\n{experiment} data summary')
-        print(f'RPNI Model sizes {[i.model_size for i in data]}')
-        print(f'Coverage testing conformance %: {[round(100 - i.coverage_diff * 100, 2) for i in data]} '
-              f'Avg:{round(100 - mean([i.coverage_diff for i in data]) * 100, 2)}%')
-        print(f'Random testing conformance %: {[round(100 - i.random_diff * 100, 2) for i in data]} '
-              f'Avg:{round(100 - mean([i.random_diff for i in data]) * 100, 2)}%')
-
-        print(f'Data size avg:{round(mean([i.data_size for i in data]), 2)}')
-        print(f'Average steps avg:{round(mean([i.average_len for i in data]), 2)}')
-
-    if verbose:
-        print('----------------------------------------------------------------')
-"""
+    if csv:
+        l_star_data_export.export_csv(f'{benchmark}_l_star_data')
+        rpni_data_export.export_csv(f'{benchmark}_rpni_data', rpni_data_names)
+        cached_l_star_data_export.export_csv(f'{benchmark}_cached_l_star_data')
+        
