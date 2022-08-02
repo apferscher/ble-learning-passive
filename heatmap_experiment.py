@@ -72,7 +72,7 @@ def plot_heatmap(experiment_data):
 
 
 if __name__ == '__main__':
-    model = load_automaton_from_file('automata/BLE/CC2640R2-no-feature-req.dot', automaton_type='mealy')
+    model = load_automaton_from_file('automata/MQTT/mosquitto__two_client_will_retain.dot', automaton_type='mealy')
     experiment_data = increasing_parameters_exp(model)
 
     print(experiment_data)
