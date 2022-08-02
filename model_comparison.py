@@ -17,9 +17,9 @@ def compare_learned_models(model_1, model_2, test_cases):
         o_2 = model_2.compute_output_seq(model_2.initial_state, test_case)
 
         if o_1 != o_2:
-            #print(test_case)
-            #print(o_1)
-            #print(o_2)
+            # print(test_case)
+            # print(o_1)
+            # print(o_2)
             diff += 1
 
     return diff / len(test_cases)
@@ -63,13 +63,9 @@ def compare_mealy_and_moore_learning():
     print(f'Mealy {round((1 - res_random1) * 100)}, Moore {round((1 - res_random2) * 100)}')
 
 
-def increasing_parameters_exp(target_model, step_increase=2, query_increase=1, num_increases=10):
-    # if you want to examine effect of increasing steps without increasing the number of queries simply put
-    # query_increase to 0, and vice versa if you want to have steps fixed
-    # Returns: a list of tuples (num_queries, query_len, rpni_model_acc)
-
-    sul = MealySUL(target_model)
-    alphabet = target_model.get_input_alphabet()
+def increasing_parameters_exp(model):
+    sul = MealySUL(model)
+    alphabet = model.get_input_alphabet()
     eq_oracle = RandomWordEqOracle(alphabet, sul, num_walks=100, min_walk_len=4, max_walk_len=8)
 
     l_star_model, data = run_Lstar(alphabet, sul, eq_oracle, 'mealy', print_level=0, return_data=True)
@@ -77,30 +73,29 @@ def increasing_parameters_exp(target_model, step_increase=2, query_increase=1, n
     learning_queries = data['queries_learning'] + data['queries_eq_oracle']
     avg_query_steps = int((data['steps_learning'] + data['steps_eq_oracle']) / learning_queries)
 
-    tc = create_test_cases([('ex1', target_model)], 10000, 'coverage')['ex1']
+    tc = create_test_cases([('ex1', model)], 10000, 'coverage')['ex1']
 
     experiment_data = []
-    curr_steps = avg_query_steps
-    curr_queries = learning_queries
-    for _ in range(num_increases):
-        curr_steps += step_increase
-        curr_queries += query_increase
 
-        random_data = generate_random_data(target_model, num_sequences=learning_queries,
-                                           min_sequence_len=curr_steps, max_sequence_len=curr_steps)
+    num_of_queries_multipliers = list(range(1, 11))
+    num_of_steps = list(range(5, 26, 2))
 
-        rpni_model = run_RPNI(random_data.data, 'mealy', print_info=True, input_completeness='sink_state')
+    for query_multiplier in num_of_queries_multipliers:
+        for steps in num_of_steps:
+            random_data = generate_random_data(model, num_sequences=query_multiplier * learning_queries,
+                                               min_sequence_len=steps - 2, max_sequence_len=steps + 2)
 
-        non_conformance = compare_learned_models(l_star_model, rpni_model, tc)
-        conformance = round((1 - non_conformance) * 100, 2)
+            rpni_model = run_RPNI(random_data.data, 'mealy', print_info=True, input_completeness='sink_state')
 
-        experiment_data.append((curr_queries, curr_steps, conformance))
+            non_conformance = compare_learned_models(l_star_model, rpni_model, tc)
+            conformance = round((1 - non_conformance) * 100, 2)
+
+            experiment_data.append((query_multiplier * learning_queries, steps, conformance))
 
     return experiment_data
+
 
 def compute_shortest_prefixes(model: MealyMachine):
     for state in model.states:
         state.prefix = model.get_shortest_path(model.initial_state, state)
     return model
-
-
