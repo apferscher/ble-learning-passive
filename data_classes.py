@@ -65,7 +65,7 @@ def l_star_summary(l_star_experiment_data, verbose):
     sum_steps = data_stats("sum_steps", l_star_experiment_data)
 
     if verbose:
-        print(f'\nL* summary:')
+        print(f'\n----L* summary----')
         print(f'States: {number_states[0]} ({number_states[1]})')
         print(f'Learning rounds: {learning_rounds[0]} ({learning_rounds[1]})')
         print(f'Output queries: {output_queries[0]} ({output_queries[1]})')
@@ -86,7 +86,8 @@ def rpni_summary(rpni_experiment_data, rpni_data_names, minimized_l_star, verbos
     minimized_l_star_data = rpni_experiment_data[minimized_l_star][0]
 
     if verbose:
-        print(f'\nRPNI summary:')
+        print(f'\n----RPNI summary----')
+        print(f'\n--Experiment: {minimized_l_star}')
         print(f'States: {minimized_l_star_data.model_size}')
         print(f'Sample size: {minimized_l_star_data.data_size}')
         print(f'Average trace length: {minimized_l_star_data.average_len}')
@@ -113,7 +114,7 @@ def rpni_summary(rpni_experiment_data, rpni_data_names, minimized_l_star, verbos
                                                             data_size, average_len, (len(correctly_learned_model), 0))
 
         if verbose:
-            print(f'\nExperiment: {experiment_name}')
+            print(f'\n--Experiment: {experiment_name}')
             print(f'States: {number_states[0]} ({number_states[1]})')
             print(f'Sample size: {data_size[0]} ({data_size[1]})')
             print(f'Average trace length: {average_len[0]} ({average_len[1]})')
@@ -133,7 +134,7 @@ def cached_l_star_summary(cached_l_star_experiment_data, verbose):
     learning_rounds = data_stats("learning_rounds", cached_l_star_experiment_data)
 
     if verbose:
-        print(f'\nCached L* summary:')
+        print(f'\n----Cached L* summary----')
         print(f'Conformance (coverage): {conformance_coverage[0]} ({conformance_coverage[1]})')
         print(f'Random sample size: {random_sample_size[0]} ({random_sample_size[1]})')
         print(f'Performed queries: {performed_queries[0]} ({performed_queries[1]})')

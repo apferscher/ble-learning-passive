@@ -16,7 +16,7 @@ if __name__ == "__main__":
     test_cases_random = create_test_cases(benchmark_models, num_tests, 'random')
 
     # number of repetition of each learning algorithm
-    repeats_per_experiment = 2  # 5
+    repeats_per_experiment = 5  # 5
 
     # levels on which output is printed
     # 0: no output is printed
@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
         # parameter for equivalence oracle
         walks_per_state = 25
-        walk_len = 25
+        walk_len = 30
 
         sul = MealySUL(model)
         alphabet = model.get_input_alphabet()
@@ -109,8 +109,8 @@ if __name__ == "__main__":
             rpni_data = {
                 # rpni_model_l_star_str: data_l_star,
                 rpni_model_random_l_star_length_str: data_random_l_star_length,
-                # rpni_model_random_large_set_str: data_random_large_set,
-                # rpni_model_random_long_traces_str: data_random_long_traces,
+                rpni_model_random_large_set_str: data_random_large_set,
+                rpni_model_random_long_traces_str: data_random_long_traces,
                 # rpni_model_minimized_char_set_str: data_minimized_char_set,
                 # rpni_model_random_good_enough_str: data_random_good_enough
             }
@@ -129,7 +129,7 @@ if __name__ == "__main__":
             rpni_experiment(data_minimized_char_set, model, test_cases_coverage[model_name],
                             test_cases_random[model_name]))
 
-        print(f'------------------{model_name}------------------')
+        print(f'\n\n------------------{model_name}------------------')
         l_star_data_export.add_entry(model_name,
                                      l_star_summary(l_star_experiment_data[model_name], verbose=verbose_level >= 1))
 
