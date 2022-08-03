@@ -1,0 +1,517 @@
+C:\Users\MSI\PycharmProjects\ble-learning-passive\venv\Scripts\python.exe C:/Users/MSI/PycharmProjects/ble-learning-passive/heatmap_experiment.py
+PTA Construction Time: 0.04
+Current automaton size: 12
+RPNI Learning Time: 3.24
+RPNI Learned 12 state automaton.
+PTA Construction Time: 0.07
+Current automaton size: 14
+RPNI Learning Time: 6.47
+RPNI Learned 14 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 0.17
+Current automaton size: 19
+RPNI Learning Time: 11.91
+RPNI Learned 19 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 0.19
+Current automaton size: 29
+RPNI Learning Time: 22.92
+RPNI Learned 29 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 0.26
+Current automaton size: 38
+RPNI Learning Time: 39.47
+RPNI Learned 38 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 0.35
+Current automaton size: 32
+RPNI Learning Time: 48.17
+RPNI Learned 32 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 0.39
+Current automaton size: 28
+RPNI Learning Time: 61.25
+RPNI Learned 28 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 0.52
+Current automaton size: 33
+RPNI Learning Time: 85.3
+RPNI Learned 33 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 0.64
+Current automaton size: 67
+RPNI Learning Time: 215.09
+RPNI Learned 67 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 0.67
+Current automaton size: 49
+RPNI Learning Time: 161.44
+RPNI Learned 49 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 0.88
+Current automaton size: 48
+RPNI Learning Time: 188.96
+RPNI Learned 48 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 0.07
+Current automaton size: 14
+RPNI Learning Time: 5.05
+RPNI Learned 14 state automaton.
+PTA Construction Time: 0.16
+Current automaton size: 18
+RPNI Learning Time: 12.95
+RPNI Learned 18 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 0.28
+Current automaton size: 18
+RPNI Learning Time: 23.64
+RPNI Learned 18 state automaton.
+PTA Construction Time: 0.43
+Current automaton size: 20
+RPNI Learning Time: 43.45
+RPNI Learned 20 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 0.58
+Current automaton size: 22
+RPNI Learning Time: 64.02
+RPNI Learned 22 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 0.78
+Current automaton size: 26
+RPNI Learning Time: 96.29
+RPNI Learned 26 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 0.95
+Current automaton size: 41
+RPNI Learning Time: 157.04
+RPNI Learned 41 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 1.16
+Current automaton size: 34
+RPNI Learning Time: 184.83
+RPNI Learned 34 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 1.35
+Current automaton size: 58
+RPNI Learning Time: 309.62
+RPNI Learned 58 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 1.83
+Current automaton size: 59
+RPNI Learning Time: 438.1
+RPNI Learned 59 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 2.06
+Current automaton size: 68
+RPNI Learning Time: 598.17
+RPNI Learned 68 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 0.14
+Current automaton size: 17
+RPNI Learning Time: 8.83
+RPNI Learned 17 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 0.27
+Current automaton size: 18
+RPNI Learning Time: 20.49
+RPNI Learned 18 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 0.51
+Current automaton size: 20
+RPNI Learning Time: 40.47
+RPNI Learned 20 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 0.7
+Current automaton size: 19
+RPNI Learning Time: 68.4
+RPNI Learned 19 state automaton.
+PTA Construction Time: 1.09
+Current automaton size: 31
+RPNI Learning Time: 117.13
+RPNI Learned 31 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 1.35
+Current automaton size: 27
+RPNI Learning Time: 161.95
+RPNI Learned 27 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 1.79
+Current automaton size: 22
+RPNI Learning Time: 227.06
+RPNI Learned 22 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 1.86
+Current automaton size: 32
+RPNI Learning Time: 332.55
+RPNI Learned 32 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 2.55
+Current automaton size: 55
+RPNI Learning Time: 537.4
+RPNI Learned 55 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 2.68
+Current automaton size: 63
+RPNI Learning Time: 754.85
+RPNI Learned 63 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 3.25
+Current automaton size: 75
+RPNI Learning Time: 1056.14
+RPNI Learned 75 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 0.16
+Current automaton size: 19
+RPNI Learning Time: 12.04
+RPNI Learned 19 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 0.44
+Current automaton size: 16
+RPNI Learning Time: 28.83
+RPNI Learned 16 state automaton.
+PTA Construction Time: 0.75
+Current automaton size: 18
+RPNI Learning Time: 58.21
+RPNI Learned 18 state automaton.
+PTA Construction Time: 1.08
+Current automaton size: 24
+RPNI Learning Time: 105.53
+RPNI Learned 24 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 1.47
+Current automaton size: 34
+RPNI Learning Time: 185.32
+RPNI Learned 34 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 1.94
+Current automaton size: 33
+RPNI Learning Time: 261.04
+RPNI Learned 33 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 2.51
+Current automaton size: 44
+RPNI Learning Time: 374.3
+RPNI Learned 44 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 2.77
+Current automaton size: 52
+RPNI Learning Time: 619.41
+RPNI Learned 52 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 3.2
+Current automaton size: 57
+RPNI Learning Time: 658.23
+RPNI Learned 57 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 4.41
+Current automaton size: 34
+RPNI Learning Time: 604.18
+RPNI Learned 34 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 4.93
+Current automaton size: 25
+RPNI Learning Time: 748.78
+RPNI Learned 25 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 0.19
+Current automaton size: 16
+RPNI Learning Time: 13.68
+RPNI Learned 16 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 0.53
+Current automaton size: 17
+RPNI Learning Time: 34.4
+RPNI Learned 17 state automaton.
+PTA Construction Time: 0.88
+Current automaton size: 19
+RPNI Learning Time: 69.04
+RPNI Learned 19 state automaton.
+PTA Construction Time: 1.32
+Current automaton size: 20
+RPNI Learning Time: 123.53
+RPNI Learned 20 state automaton.
+PTA Construction Time: 2.24
+Current automaton size: 38
+RPNI Learning Time: 246.78
+RPNI Learned 38 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 2.64
+Current automaton size: 37
+RPNI Learning Time: 324.63
+RPNI Learned 37 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 3.41
+Current automaton size: 26
+RPNI Learning Time: 377.05
+RPNI Learned 26 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 3.59
+Current automaton size: 34
+RPNI Learning Time: 528.2
+RPNI Learned 34 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 4.3
+Current automaton size: 63
+RPNI Learning Time: 969.82
+RPNI Learned 63 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 5.07
+Current automaton size: 53
+RPNI Learning Time: 920.81
+RPNI Learned 53 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 5.57
+Current automaton size: 90
+RPNI Learning Time: 2051.77
+RPNI Learned 90 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 0.22
+Current automaton size: 17
+RPNI Learning Time: 16.6
+RPNI Learned 17 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 0.64
+Current automaton size: 15
+RPNI Learning Time: 40.73
+RPNI Learned 15 state automaton.
+PTA Construction Time: 1.18
+Current automaton size: 22
+RPNI Learning Time: 93.95
+RPNI Learned 22 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 1.85
+Current automaton size: 24
+RPNI Learning Time: 162.16
+RPNI Learned 24 state automaton.
+PTA Construction Time: 2.6
+Current automaton size: 29
+RPNI Learning Time: 261.56
+RPNI Learned 29 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 3.38
+Current automaton size: 19
+RPNI Learning Time: 320.07
+RPNI Learned 19 state automaton.
+PTA Construction Time: 4.24
+Current automaton size: 18
+RPNI Learning Time: 445.54
+RPNI Learned 18 state automaton.
+PTA Construction Time: 4.74
+Current automaton size: 18
+RPNI Learning Time: 579.95
+RPNI Learned 18 state automaton.
+PTA Construction Time: 5.96
+Current automaton size: 18
+RPNI Learning Time: 720.98
+RPNI Learned 18 state automaton.
+PTA Construction Time: 7.04
+Current automaton size: 18
+RPNI Learning Time: 822.23
+RPNI Learned 18 state automaton.
+PTA Construction Time: 6.75
+Current automaton size: 121
+RPNI Learning Time: 3302.39
+RPNI Learned 121 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 0.23
+Current automaton size: 17
+RPNI Learning Time: 17.09
+RPNI Learned 17 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 0.64
+Current automaton size: 17
+RPNI Learning Time: 46.56
+RPNI Learned 17 state automaton.
+PTA Construction Time: 1.3
+Current automaton size: 17
+RPNI Learning Time: 90.52
+RPNI Learned 17 state automaton.
+PTA Construction Time: 1.95
+Current automaton size: 29
+RPNI Learning Time: 185.48
+RPNI Learned 29 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 2.81
+Current automaton size: 29
+RPNI Learning Time: 280.09
+RPNI Learned 29 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 3.52
+Current automaton size: 50
+RPNI Learning Time: 498.31
+RPNI Learned 50 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 4.42
+Current automaton size: 18
+RPNI Learning Time: 481.33
+RPNI Learned 18 state automaton.
+PTA Construction Time: 5.42
+Current automaton size: 28
+RPNI Learning Time: 669.48
+RPNI Learned 28 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 6.2
+Current automaton size: 18
+RPNI Learning Time: 771.78
+RPNI Learned 18 state automaton.
+PTA Construction Time: 7.37
+Current automaton size: 19
+RPNI Learning Time: 953.69
+RPNI Learned 19 state automaton.
+PTA Construction Time: 8.22
+Current automaton size: 18
+RPNI Learning Time: 1126.08
+RPNI Learned 18 state automaton.
+PTA Construction Time: 0.28
+Current automaton size: 16
+RPNI Learning Time: 19.81
+RPNI Learned 16 state automaton.
+PTA Construction Time: 0.84
+Current automaton size: 15
+RPNI Learning Time: 50.0
+RPNI Learned 15 state automaton.
+PTA Construction Time: 1.59
+Current automaton size: 19
+RPNI Learning Time: 109.89
+RPNI Learned 19 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 2.44
+Current automaton size: 22
+RPNI Learning Time: 194.28
+RPNI Learned 22 state automaton.
+PTA Construction Time: 3.41
+Current automaton size: 30
+RPNI Learning Time: 321.42
+RPNI Learned 30 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 4.41
+Current automaton size: 29
+RPNI Learning Time: 444.66
+RPNI Learned 29 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 5.66
+Current automaton size: 19
+RPNI Learning Time: 554.77
+RPNI Learned 19 state automaton.
+PTA Construction Time: 6.42
+Current automaton size: 18
+RPNI Learning Time: 713.58
+RPNI Learned 18 state automaton.
+PTA Construction Time: 7.72
+Current automaton size: 18
+RPNI Learning Time: 897.0
+RPNI Learned 18 state automaton.
+PTA Construction Time: 8.83
+Current automaton size: 19
+RPNI Learning Time: 1090.61
+RPNI Learned 19 state automaton.
+PTA Construction Time: 10.12
+Current automaton size: 18
+RPNI Learning Time: 1301.0
+RPNI Learned 18 state automaton.
+PTA Construction Time: 0.33
+Current automaton size: 17
+RPNI Learning Time: 22.42
+RPNI Learned 17 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 0.89
+Current automaton size: 17
+RPNI Learning Time: 60.0
+RPNI Learned 17 state automaton.
+PTA Construction Time: 1.83
+Current automaton size: 22
+RPNI Learning Time: 132.95
+RPNI Learned 22 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 2.84
+Current automaton size: 25
+RPNI Learning Time: 236.41
+RPNI Learned 25 state automaton.
+PTA Construction Time: 4.08
+Current automaton size: 33
+RPNI Learning Time: 406.59
+RPNI Learned 33 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 5.3
+Current automaton size: 44
+RPNI Learning Time: 613.84
+RPNI Learned 44 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 6.36
+Current automaton size: 65
+RPNI Learning Time: 994.45
+RPNI Learned 65 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 7.72
+Current automaton size: 35
+RPNI Learning Time: 910.03
+RPNI Learned 35 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 8.91
+Current automaton size: 18
+RPNI Learning Time: 1010.41
+RPNI Learned 18 state automaton.
+PTA Construction Time: 10.56
+Current automaton size: 18
+RPNI Learning Time: 1245.12
+RPNI Learned 18 state automaton.
+PTA Construction Time: 11.69
+Current automaton size: 18
+RPNI Learning Time: 1510.16
+RPNI Learned 18 state automaton.
+PTA Construction Time: 0.37
+Current automaton size: 16
+RPNI Learning Time: 23.94
+RPNI Learned 16 state automaton.
+PTA Construction Time: 1.02
+Current automaton size: 16
+RPNI Learning Time: 64.78
+RPNI Learned 16 state automaton.
+PTA Construction Time: 2.22
+Current automaton size: 20
+RPNI Learning Time: 140.0
+RPNI Learned 20 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 3.45
+Current automaton size: 22
+RPNI Learning Time: 243.34
+RPNI Learned 22 state automaton.
+PTA Construction Time: 4.81
+Current automaton size: 23
+RPNI Learning Time: 377.53
+RPNI Learned 23 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 6.52
+Current automaton size: 21
+RPNI Learning Time: 529.12
+RPNI Learned 21 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 7.98
+Current automaton size: 25
+RPNI Learning Time: 738.87
+RPNI Learned 25 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 9.23
+Current automaton size: 21
+RPNI Learning Time: 924.28
+RPNI Learned 21 state automaton.
+PTA Construction Time: 11.16
+Current automaton size: 23
+RPNI Learning Time: 1162.42
+RPNI Learned 23 state automaton.
+Learned model was not input complete. Adapting it with sink_state transitions.
+PTA Construction Time: 12.47
+Current automaton size: 18
+RPNI Learning Time: 1381.22
+RPNI Learned 18 state automaton.
+PTA Construction Time: 14.37
+Current automaton size: 18
+RPNI Learning Time: 1652.14
+RPNI Learned 18 state automaton.
+
+
+[(3697, 5, 62.97), (3697, 7, 85.2), (3697, 9, 83.9), (3697, 11, 86.54), (3697, 13, 89.61), (3697, 15, 93.79), (3697, 17, 96.46), (3697, 19, 97.21), (3697, 21, 93.88), (3697, 23, 95.2), (3697, 25, 96.62), (7394, 5, 78.61), (7394, 7, 84.79), (7394, 9, 89.65), (7394, 11, 97.96), (7394, 13, 96.62), (7394, 15, 97.33), (7394, 17, 96.99), (7394, 19, 99.22), (7394, 21, 96.64), (7394, 23, 97.55), (7394, 25, 97.94), (11091, 5, 73.4), (11091, 7, 86.08), (11091, 9, 90.5), (11091, 11, 97.55), (11091, 13, 96.56), (11091, 15, 98.85), (11091, 17, 98.87), (11091, 19, 99.03), (11091, 21, 98.84), (11091, 23, 98.88), (11091, 25, 98.94), (14788, 5, 79.72), (14788, 7, 89.67), (14788, 9, 94.84), (14788, 11, 96.28), (14788, 13, 97.3), (14788, 15, 98.64), (14788, 17, 98.45), (14788, 19, 99.14), (14788, 21, 99.08), (14788, 23, 99.04), (14788, 25, 99.92), (18485, 5, 82.36), (18485, 7, 88.9), (18485, 9, 95.32), (18485, 11, 98.91), (18485, 13, 97.5), (18485, 15, 98.14), (18485, 17, 99.14), (18485, 19, 98.7), (18485, 21, 99.55), (18485, 23, 98.95), (18485, 25, 99.17), (22182, 5, 77.67), (22182, 7, 94.5), (22182, 9, 96.56), (22182, 11, 98.41), (22182, 13, 98.85), (22182, 15, 99.79), (22182, 17, 99.94), (22182, 19, 99.98), (22182, 21, 100.0), (22182, 23, 100.0), (22182, 25, 98.81), (25879, 5, 84.09), (25879, 7, 93.56), (25879, 9, 98.8), (25879, 11, 98.22), (25879, 13, 98.33), (25879, 15, 99.25), (25879, 17, 99.98), (25879, 19, 99.7), (25879, 21, 100.0), (25879, 23, 99.95), (25879, 25, 100.0), (29576, 5, 86.03), (29576, 7, 94.13), (29576, 9, 99.03), (29576, 11, 98.28), (29576, 13, 98.92), (29576, 15, 99.18), (29576, 17, 99.91), (29576, 19, 100.0), (29576, 21, 100.0), (29576, 23, 99.99), (29576, 25, 100.0), (33273, 5, 78.83), (33273, 7, 97.4), (33273, 9, 98.53), (33273, 11, 98.96), (33273, 13, 99.06), (33273, 15, 98.99), (33273, 17, 98.9), (33273, 19, 99.31), (33273, 21, 100.0), (33273, 23, 100.0), (33273, 25, 100.0), (36970, 5, 80.88), (36970, 7, 96.28), (36970, 9, 98.23), (36970, 11, 98.9), (36970, 13, 99.55), (36970, 15, 99.48), (36970, 17, 99.55), (36970, 19, 99.95), (36970, 21, 99.79), (36970, 23, 100.0), (36970, 25, 100.0)]
+[3697, 7394, 11091, 14788, 18485, 22182, 25879, 29576, 33273, 36970]
+[5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25]
+[[96.62, 97.94, 98.94, 99.92, 99.17, 98.81, 100.0, 100.0, 100.0, 100.0], [95.2, 97.55, 98.88, 99.04, 98.95, 100.0, 99.95, 99.99, 100.0, 100.0], [93.88, 96.64, 98.84, 99.08, 99.55, 100.0, 100.0, 100.0, 100.0, 99.79], [97.21, 99.22, 99.03, 99.14, 98.7, 99.98, 99.7, 100.0, 99.31, 99.95], [96.46, 96.99, 98.87, 98.45, 99.14, 99.94, 99.98, 99.91, 98.9, 99.55], [93.79, 97.33, 98.85, 98.64, 98.14, 99.79, 99.25, 99.18, 98.99, 99.48], [89.61, 96.62, 96.56, 97.3, 97.5, 98.85, 98.33, 98.92, 99.06, 99.55], [86.54, 97.96, 97.55, 96.28, 98.91, 98.41, 98.22, 98.28, 98.96, 98.9], [83.9, 89.65, 90.5, 94.84, 95.32, 96.56, 98.8, 99.03, 98.53, 98.23], [85.2, 84.79, 86.08, 89.67, 88.9, 94.5, 93.56, 94.13, 97.4, 96.28], [62.97, 78.61, 73.4, 79.72, 82.36, 77.67, 84.09, 86.03, 78.83, 80.88]]
+
