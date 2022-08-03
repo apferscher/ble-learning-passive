@@ -1,8 +1,5 @@
-from os import listdir
-
 from aalpy.SULs import MealySUL
 from aalpy.learning_algs import run_Lstar, run_RPNI
-from aalpy.utils import load_automaton_from_file
 
 from data_classes import RPNIExperiment, CachedLStarExperiment, LStarExperiment
 from data_generation import DataSet, l_star_with_populated_cache

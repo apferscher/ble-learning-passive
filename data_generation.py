@@ -57,7 +57,6 @@ def data_from_l_star_E_set(hypothesis, e_set, include_extended_s_set=True, prefi
 
 
 def data_from_computed_e_set(hypothesis, include_extended_s_set=True, prefix_closed=True, verbose=False):
-    characterization_set = hypothesis.compute_characterization_set()
     return data_from_l_star_E_set(hypothesis, hypothesis.compute_characterization_set(), include_extended_s_set,
                                   prefix_closed, verbose)
 

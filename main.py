@@ -7,7 +7,7 @@ from model_comparison import *
 if __name__ == "__main__":
 
     # load all automata from benchmark
-    benchmark = 'MQTT'  # 'BLE'
+    benchmark = 'BLE'  # 'BLE'
     benchmark_models = load_dot_files(benchmark)
 
     # generate test suite for conformance testing after learning
@@ -40,8 +40,8 @@ if __name__ == "__main__":
     rpni_data = {
         # rpni_model_l_star_str: data_l_star,
         rpni_model_random_l_star_length_str: None,
-        # rpni_model_random_large_set_str: None,
-        # rpni_model_random_long_traces_str: None,
+        rpni_model_random_large_set_str: None,
+        rpni_model_random_long_traces_str: None,
         # rpni_model_minimized_char_set_str: data_minimized_char_set,
         # rpni_model_random_good_enough_str: data_random_good_enough
     }

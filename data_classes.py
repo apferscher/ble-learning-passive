@@ -123,7 +123,7 @@ def rpni_summary(rpni_experiment_data, rpni_data_names, minimized_l_star, verbos
             print(
                 f'Correctly learned models: {len(correctly_learned_model)}/{len(rpni_experiment_data[experiment_name])}')
 
-        return rpni_export_data
+    return rpni_export_data
 
 
 def cached_l_star_summary(cached_l_star_experiment_data, verbose):
