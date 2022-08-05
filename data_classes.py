@@ -94,11 +94,12 @@ def rpni_summary(rpni_experiment_data, rpni_data_names, minimized_l_star, verbos
         print(f'Conformance (coverage): {minimized_l_star_data.conformance_coverage}')
         print(f'Conformance (random): {minimized_l_star_data.conformance_random}')
 
+    minimized_l_star_data_correct = 1 if minimized_l_star_data.conformance_coverage == 100 else 0
     rpni_export_data[minimized_l_star] = RPNIExportEntry((minimized_l_star_data.model_size, 0),
                                                          (minimized_l_star_data.conformance_coverage, 0),
                                                          (minimized_l_star_data.conformance_random, 0),
                                                          (minimized_l_star_data.data_size, 0),
-                                                         (minimized_l_star_data.average_len, 0), ("", 0))
+                                                         (minimized_l_star_data.average_len, 0), (minimized_l_star_data_correct, 0))
 
     for experiment_name in rpni_data_names:
         number_states = data_stats("model_size", rpni_experiment_data[experiment_name])

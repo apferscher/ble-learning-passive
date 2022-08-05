@@ -97,7 +97,7 @@ class DataExporter:
                 row = [k]
                 for model in self.export_data.keys():
                     elem = getattr(self.export_data[model], self.attributes[k])
-                    row.append(f'{round(elem[0],2):.2f} ({round(elem[1],2):.2f})')
+                    row.append(f'{elem[0]:.2f} ({elem[1]:.2f})')
                 writer.writerow(row)
 
 class RPNIDataExporter(DataExporter):
@@ -122,5 +122,5 @@ class RPNIDataExporter(DataExporter):
                     row = [e, k] 
                     for model in self.export_data.keys():
                         elem = getattr(self.export_data[model][e], self.attributes[k])
-                        row.append(f'{round(elem[0],2):.2f} ({round(elem[1],2):.2f})')
+                        row.append(f'{elem[0]:.2f} ({elem[1]:.2f})')
                     writer.writerow(row)

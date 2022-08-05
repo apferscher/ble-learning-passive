@@ -1,13 +1,19 @@
+import sys
+
 from csv_export import *
 from data_classes import *
 from data_generation import *
 from learning_setups import *
 from model_comparison import *
 
+
+
 if __name__ == "__main__":
 
+    args = sys.argv[1:]
+
     # load all automata from benchmark
-    benchmark = 'MQTT'  # 'MQTT' or 'BLE'
+    benchmark = args[0] if len(args) == 1 else "BLE"  # 'MQTT' or 'BLE'
     benchmark_models = load_dot_files(benchmark)
 
     # generate test suite for conformance testing after learning
@@ -16,7 +22,7 @@ if __name__ == "__main__":
     test_cases_random = create_test_cases(benchmark_models, num_tests, 'random')
 
     # number of repetition of each learning algorithm
-    repeats_per_experiment = 5  # 5
+    repeats_per_experiment = 2  # 5
 
     # levels on which output is printed
     # 0: no output is printed
@@ -142,5 +148,6 @@ if __name__ == "__main__":
 
     if csv:
         l_star_data_export.export_csv(f'{benchmark}_l_star_data')
-        rpni_data_export.export_csv(f'{benchmark}_rpni_data', rpni_data_names)
+        rpni_experiments = [*rpni_data] + [rpni_model_minimized_char_set_str]
+        rpni_data_export.export_csv(f'{benchmark}_rpni_data', rpni_experiments)
         cached_l_star_data_export.export_csv(f'{benchmark}_cached_l_star_data')
