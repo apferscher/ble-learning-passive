@@ -7,7 +7,7 @@ from model_comparison import *
 if __name__ == "__main__":
 
     # load all automata from benchmark
-    benchmark = 'BLE'  # 'BLE'
+    benchmark = 'MQTT'  # 'MQTT' or 'BLE'
     benchmark_models = load_dot_files(benchmark)
 
     # generate test suite for conformance testing after learning
