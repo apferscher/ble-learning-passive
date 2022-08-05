@@ -22,7 +22,7 @@ if __name__ == "__main__":
     test_cases_random = create_test_cases(benchmark_models, num_tests, 'random')
 
     # number of repetition of each learning algorithm
-    repeats_per_experiment = 2  # 5
+    repeats_per_experiment = 5  # 5
 
     # levels on which output is printed
     # 0: no output is printed
