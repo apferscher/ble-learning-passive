@@ -16,7 +16,7 @@ This repository contains the supplemental material to the paper ' Active vs. Pas
     - [emqtt](automata/MQTT/emqtt__two_client_will_retain.dot) \[[PDF](automata/MQTT/pdf/emqtt__two_client_will_retain.pdf)\]
     - [HBMQTT](automata/MQTT/hbmqtt__two_client_will_retain.dot) \[[PDF](automata/MQTT/pdf/hbmqtt__two_client_will_retain.pdf)\]
     - [Mosquitto](automata/MQTT/mosquitto__two_client_will_retain.dot) \[[PDF](automata/MQTT/pdf/mosquitto__two_client_will_retain.pdf)\]
-    - [Mosquitto](automata/MQTT/VerneMQ__two_client_will_retain.dot) \[[PDF](automata/MQTT/pdf/VerneMQ__two_client_will_retain.pdf)\]
+    - [VerneMQ](automata/MQTT/VerneMQ__two_client_will_retain.dot) \[[PDF](automata/MQTT/pdf/VerneMQ__two_client_will_retain.pdf)\]
 - Experiment execution ([main.py](main.py)):
 
 ## Prerequisites
